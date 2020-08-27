@@ -1,0 +1,14 @@
+{
+  "appId": "io.ionic.starter",
+  "appName": "Dinheiro App",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "webDir": "build",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0
+    }
+  },
+  "cordova": {},
+  "linuxAndroidStudioPath": "/home/marcelo/app/android-studio/bin/studio.sh"
+}

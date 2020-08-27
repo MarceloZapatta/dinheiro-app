@@ -3,17 +3,21 @@ import { Redirect, Route } from 'react-router-dom';
 import {
   IonApp,
   IonIcon,
-  IonLabel,
   IonRouterOutlet,
   IonTabBar,
   IonTabButton,
-  IonTabs
+  IonTabs,
+  IonMenu,
+  IonContent,
+  IonList,
+  IonItem,
 } from '@ionic/react';
+
+import { menuController } from '@ionic/core';
 import { IonReactRouter } from '@ionic/react-router';
-import { ellipse, square, triangle } from 'ionicons/icons';
-import Tab1 from './pages/Tab1';
-import Tab2 from './pages/Tab2';
-import Tab3 from './pages/Tab3';
+import { cashOutline, menu } from 'ionicons/icons';
+import Movimentacoes from './pages/movimentacoes/Movimentacoes';
+import MovimentacoesAdicionar from './pages/movimentacoes/MovimentacoesAdicionar';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -34,33 +38,55 @@ import '@ionic/react/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 
-const App: React.FC = () => (
-  <IonApp>
-    <IonReactRouter>
-      <IonTabs>
-        <IonRouterOutlet>
-          <Route path="/tab1" component={Tab1} exact={true} />
-          <Route path="/tab2" component={Tab2} exact={true} />
-          <Route path="/tab3" component={Tab3} />
-          <Route path="/" render={() => <Redirect to="/tab1" />} exact={true} />
-        </IonRouterOutlet>
-        <IonTabBar slot="bottom">
-          <IonTabButton tab="tab1" href="/tab1">
-            <IonIcon icon={triangle} />
-            <IonLabel>Tab 1</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="tab2" href="/tab2">
-            <IonIcon icon={ellipse} />
-            <IonLabel>Tab 2</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="tab3" href="/tab3">
-            <IonIcon icon={square} />
-            <IonLabel>Tab 3</IonLabel>
-          </IonTabButton>
-        </IonTabBar>
-      </IonTabs>
-    </IonReactRouter>
-  </IonApp>
-);
+export default class App extends React.Component {
+  openMenu() {
+    return menuController.open();
+  }
 
-export default App;
+  render() {
+    return (
+      <IonApp>
+        <IonMenu side='start' menuId='first' contentId='menu-content'>
+          <IonContent id='menu-content'>
+            <IonList>
+              <IonItem>Perfil</IonItem>
+              <IonItem>Extrato</IonItem>
+              <IonItem>Contas</IonItem>
+              <IonItem>Menu Item</IonItem>
+              <IonItem>Menu Item</IonItem>
+            </IonList>
+          </IonContent>
+        </IonMenu>
+        <IonReactRouter>
+          <IonTabs>
+            <IonRouterOutlet>
+              <Route
+                path='/movimentacoes'
+                component={Movimentacoes}
+                exact={true}
+              />
+              <Route
+                path='/movimentacoes/adicionar'
+                component={MovimentacoesAdicionar}
+                exact={true}
+              />
+              <Route
+                path='/'
+                render={() => <Redirect to='/movimentacoes' />}
+                exact={true}
+              />
+            </IonRouterOutlet>
+            <IonTabBar slot='bottom'>
+              <IonTabButton tab='movimentacoes' href='/movimentacoes'>
+                <IonIcon icon={cashOutline} />
+              </IonTabButton>
+              <IonTabButton onClick={() => this.openMenu()}>
+                <IonIcon icon={menu}  onClick={() => this.openMenu()}/>
+              </IonTabButton>
+            </IonTabBar>
+          </IonTabs>
+        </IonReactRouter>
+      </IonApp>
+    );
+  }
+}

@@ -1,0 +1,11 @@
+yarn run v1.22.4
+$ electron . --no-sandbox
+
+(electron:9246): Gtk-WARNING **: 21:58:18.255: Theme parsing error: gtk.css:127:35: The style property GtkButton:child-displacement-x is deprecated and shouldn't be used anymore. It will be removed in a future version
+
+(electron:9246): Gtk-WARNING **: 21:58:18.255: Theme parsing error: gtk.css:128:35: The style property GtkButton:child-displacement-y is deprecated and shouldn't be used anymore. It will be removed in a future version
+
+(electron:9246): Gtk-WARNING **: 21:58:18.255: Theme parsing error: gtk.css:132:46: The style property GtkScrolledWindow:scrollbars-within-bevel is deprecated and shouldn't be used anymore. It will be removed in a future version
+Attempting to call a function in a renderer window that has been closed or released.
+Function provided here: undefined
+Done in 2823.63s.
