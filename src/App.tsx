@@ -16,6 +16,7 @@ import {
 import { menuController } from '@ionic/core';
 import { IonReactRouter } from '@ionic/react-router';
 import { cashOutline, menu } from 'ionicons/icons';
+import { Login } from './pages/auth/Login';
 import Movimentacoes from './pages/movimentacoes/Movimentacoes';
 import MovimentacoesAdicionar from './pages/movimentacoes/MovimentacoesAdicionar';
 
@@ -39,15 +40,65 @@ import '@ionic/react/css/display.css';
 import './theme/variables.css';
 
 export default class App extends React.Component {
+  constructor(props: any) {
+    super(props);
+
+    this.state = {
+      usuario: null,
+    };
+  }
+
   openMenu() {
     return menuController.open();
+  }
+
+  renderRoutes() {
+    if (false) {
+      return (
+        <IonTabs>
+          <IonRouterOutlet>
+            <Route
+              path="/movimentacoes"
+              component={Movimentacoes}
+              exact={true}
+            />
+            <Route
+              path="/movimentacoes/adicionar"
+              component={MovimentacoesAdicionar}
+              exact={true}
+            />
+            <Route path="/" component={Login} exact={true} />
+          </IonRouterOutlet>
+          <IonTabBar slot="bottom">
+            <IonTabButton tab="movimentacoes" href="/movimentacoes">
+              <IonIcon icon={cashOutline} />
+            </IonTabButton>
+            <IonTabButton onClick={() => this.openMenu()}>
+              <IonIcon icon={menu} onClick={() => this.openMenu()} />
+            </IonTabButton>
+          </IonTabBar>
+        </IonTabs>
+      );
+    }
+
+    return (
+      <IonRouterOutlet>
+        <Route path="/movimentacoes" component={Movimentacoes} exact={true} />
+        <Route
+          path="/movimentacoes/adicionar"
+          component={MovimentacoesAdicionar}
+          exact={true}
+        />
+        <Route path="/" component={Login} exact={true} />
+      </IonRouterOutlet>
+    );
   }
 
   render() {
     return (
       <IonApp>
-        <IonMenu side='start' menuId='first' contentId='menu-content'>
-          <IonContent id='menu-content'>
+        <IonMenu side="start" menuId="first" contentId="menu-content">
+          <IonContent id="menu-content">
             <IonList>
               <IonItem>Perfil</IonItem>
               <IonItem>Extrato</IonItem>
@@ -58,33 +109,7 @@ export default class App extends React.Component {
           </IonContent>
         </IonMenu>
         <IonReactRouter>
-          <IonTabs>
-            <IonRouterOutlet>
-              <Route
-                path='/movimentacoes'
-                component={Movimentacoes}
-                exact={true}
-              />
-              <Route
-                path='/movimentacoes/adicionar'
-                component={MovimentacoesAdicionar}
-                exact={true}
-              />
-              <Route
-                path='/'
-                render={() => <Redirect to='/movimentacoes' />}
-                exact={true}
-              />
-            </IonRouterOutlet>
-            <IonTabBar slot='bottom'>
-              <IonTabButton tab='movimentacoes' href='/movimentacoes'>
-                <IonIcon icon={cashOutline} />
-              </IonTabButton>
-              <IonTabButton onClick={() => this.openMenu()}>
-                <IonIcon icon={menu}  onClick={() => this.openMenu()}/>
-              </IonTabButton>
-            </IonTabBar>
-          </IonTabs>
+          <IonRouterOutlet>{this.renderRoutes()}</IonRouterOutlet>
         </IonReactRouter>
       </IonApp>
     );

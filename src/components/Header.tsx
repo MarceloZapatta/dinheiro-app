@@ -19,11 +19,11 @@ class Header extends React.Component<HeaderProps> {
     return (
       <IonHeader>
         <IonToolbar>
-          <IonButtons slot='start'>
+          <IonButtons slot="start">
             <IonBackButton defaultHref={this.props.defaultHref} />
           </IonButtons>
           <IonRow>
-            <IonCol size-lg='6' offset-lg='3'>
+            <IonCol size-lg="6" offset-lg="3">
               <IonTitle color="primary">{this.props.titulo}</IonTitle>
             </IonCol>
           </IonRow>

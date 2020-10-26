@@ -12,12 +12,12 @@ export default class Item extends React.Component<ItemProps> {
   render() {
     return (
       <IonItem>
-        <IonLabel color='medium'>
+        <IonLabel color="medium">
           {format(this.props.movimento.data, 'dd/MM')}
         </IonLabel>
         <IonLabel>{this.props.movimento.descricao}</IonLabel>
-        <IonItem lines='none' slot='end'>
-          <IonLabel color='danger'>
+        <IonItem lines="none" slot="end">
+          <IonLabel color="danger">
             -{' '}
             {Intl.NumberFormat('pt-BR', {
               style: 'currency',

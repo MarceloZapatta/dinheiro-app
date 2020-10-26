@@ -4,12 +4,7 @@ export default class Movimento {
   valor: number;
   data: Date;
 
-  constructor(
-    id: number,
-    valor: number,
-    descricao: string,
-    data: Date
-  ) {
+  constructor(id: number, valor: number, descricao: string, data: Date) {
     this.id = id;
     this.descricao = descricao;
     this.valor = valor;

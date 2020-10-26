@@ -54,7 +54,7 @@ export default class MovimentacoesAdicionar extends React.Component<
       if (isNaN(Number(keyEntered))) {
         return;
       }
-      
+
       valorNovo *= 10;
       const valorDecimal = Number(keyEntered) / 100;
       valorNovo = Number(valorNovo.toFixed(2)) + valorDecimal;
@@ -83,25 +83,25 @@ export default class MovimentacoesAdicionar extends React.Component<
   render() {
     return (
       <IonPage>
-        <Header titulo='Adicionar'></Header>
+        <Header titulo="Adicionar"></Header>
         <IonContent>
           <IonList>
             <IonItem>
-              <IonLabel position='floating'>Data</IonLabel>
+              <IonLabel position="floating">Data</IonLabel>
               <IonDatetime
-                max='2200'
-                min='1900'
-                displayFormat='DD/MM/YYYY'
+                max="2200"
+                min="1900"
+                displayFormat="DD/MM/YYYY"
               ></IonDatetime>
             </IonItem>
             <IonItem>
-              <IonLabel position='floating'>Descrição</IonLabel>
+              <IonLabel position="floating">Descrição</IonLabel>
               <IonInput></IonInput>
             </IonItem>
             <IonItem>
-              <IonLabel position='floating'>Valor</IonLabel>
+              <IonLabel position="floating">Valor</IonLabel>
               <IonInput
-                type='text'
+                type="text"
                 value={this.state.valorFormatado}
                 onKeyDown={(e) => this.handleCurrencyInput(e.nativeEvent)}
               ></IonInput>
@@ -109,9 +109,9 @@ export default class MovimentacoesAdicionar extends React.Component<
           </IonList>
         </IonContent>
         <IonFooter>
-          <IonToolbar class='ion-text-center'>
-            <Link color='primary' to={'/movimentacoes/adicionar'}>
-              <IonButton fill='clear'>
+          <IonToolbar class="ion-text-center">
+            <Link color="primary" to={'/movimentacoes/adicionar'}>
+              <IonButton fill="clear">
                 <IonIcon icon={addOutline}></IonIcon>
                 Adicionar
               </IonButton>

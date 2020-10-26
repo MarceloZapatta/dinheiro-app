@@ -41,20 +41,20 @@ class Movimentacoes extends React.Component {
   render() {
     return (
       <IonPage>
-        <Header titulo='Movimentações'></Header>
+        <Header titulo="Movimentações"></Header>
         <IonContent>
           <IonGrid>
             <IonRow>
-              <IonCol size-lg='6' offset-lg='3'>
+              <IonCol size-lg="6" offset-lg="3">
                 <IonList>{this.movimentos()}</IonList>
               </IonCol>
             </IonRow>
           </IonGrid>
         </IonContent>
         <IonFooter>
-          <IonToolbar class='ion-text-center'>
-            <Link color='primary' to={'/movimentacoes/adicionar'}>
-              <IonButton fill='clear'>
+          <IonToolbar class="ion-text-center">
+            <Link color="primary" to={'/movimentacoes/adicionar'}>
+              <IonButton fill="clear">
                 <IonIcon icon={addOutline}></IonIcon>
                 Adicionar
               </IonButton>
