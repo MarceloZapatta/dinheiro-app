@@ -22,26 +22,26 @@ import Item from '../../components/movimento/Item';
 import Movimento from '../../model/Movimento';
 
 class Movimentacoes extends React.Component {
-  movimentos() {
-    let movimentos = [];
+  movimentos = () => {
+    const movimentos = [];
 
-    for (let index = 0; index < 10; index++) {
-      let movimento = new Movimento(
+    for (let index = 0; index < 10; index += 1) {
+      const movimento = new Movimento(
         Number((Math.random() * 1000).toFixed(0)),
         Number((Math.random() * 100).toFixed(2)),
         'UBER',
         new Date()
       );
-      movimentos.push(<Item key={movimento.id} movimento={movimento}></Item>);
+      movimentos.push(<Item key={movimento.id} movimento={movimento} />);
     }
 
     return movimentos;
-  }
+  };
 
   render() {
     return (
       <IonPage>
-        <Header titulo="Movimentações"></Header>
+        <Header titulo="Movimentações" />
         <IonContent>
           <IonGrid>
             <IonRow>
@@ -53,9 +53,9 @@ class Movimentacoes extends React.Component {
         </IonContent>
         <IonFooter>
           <IonToolbar class="ion-text-center">
-            <Link color="primary" to={'/movimentacoes/adicionar'}>
+            <Link color="primary" to="/movimentacoes/adicionar">
               <IonButton fill="clear">
-                <IonIcon icon={addOutline}></IonIcon>
+                <IonIcon icon={addOutline} />
                 Adicionar
               </IonButton>
             </Link>

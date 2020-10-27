@@ -1,4 +1,5 @@
 import React from 'react';
+
 import {
   IonPage,
   IonContent,
@@ -14,9 +15,9 @@ import {
 } from '@ionic/react';
 
 import './MovimentacoesAdicionar.css';
-import Header from '../../components/Header';
 import { Link } from 'react-router-dom';
 import { addOutline } from 'ionicons/icons';
+import Header from '../../components/Header';
 
 interface StateInterface {
   valor: number;
@@ -36,6 +37,14 @@ export default class MovimentacoesAdicionar extends React.Component<
     };
   }
 
+  formatMoney = (valorNumerico: number) => {
+    return Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      maximumFractionDigits: 2,
+    }).format(valorNumerico);
+  };
+
   handleCurrencyInput(e: KeyboardEvent) {
     e.preventDefault();
 
@@ -44,14 +53,15 @@ export default class MovimentacoesAdicionar extends React.Component<
     const keyCodeBackspace = 8;
     const keyCodeDelete = 46;
 
-    let valorNovo = this.state.valor;
+    const { valor } = this.state;
+    let valorNovo = valor;
 
     if (keyCodEntered === keyCodeBackspace || keyCodEntered === keyCodeDelete) {
       valorNovo /= 10;
-      let valorString = valorNovo.toFixed(2);
+      const valorString = valorNovo.toFixed(2);
       valorNovo = Number(valorString);
     } else {
-      if (isNaN(Number(keyEntered))) {
+      if (!Number.isNaN(Number(keyEntered))) {
         return;
       }
 
@@ -63,56 +73,45 @@ export default class MovimentacoesAdicionar extends React.Component<
 
     valorNovo = Math.abs(valorNovo);
 
-    let valorFormatadoNovo = this.formatMoney(valorNovo);
+    const valorFormatadoNovo = this.formatMoney(valorNovo);
 
     this.setState({
       valor: valorNovo,
       valorFormatado: valorFormatadoNovo,
     });
-    return;
-  }
-
-  formatMoney(valorNumerico: number) {
-    return Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-      maximumFractionDigits: 2,
-    }).format(valorNumerico);
   }
 
   render() {
+    const { valorFormatado } = this.state;
+
     return (
       <IonPage>
-        <Header titulo="Adicionar"></Header>
+        <Header titulo="Adicionar" />
         <IonContent>
           <IonList>
             <IonItem>
               <IonLabel position="floating">Data</IonLabel>
-              <IonDatetime
-                max="2200"
-                min="1900"
-                displayFormat="DD/MM/YYYY"
-              ></IonDatetime>
+              <IonDatetime max="2200" min="1900" displayFormat="DD/MM/YYYY" />
             </IonItem>
             <IonItem>
               <IonLabel position="floating">Descrição</IonLabel>
-              <IonInput></IonInput>
+              <IonInput />
             </IonItem>
             <IonItem>
               <IonLabel position="floating">Valor</IonLabel>
               <IonInput
                 type="text"
-                value={this.state.valorFormatado}
+                value={valorFormatado}
                 onKeyDown={(e) => this.handleCurrencyInput(e.nativeEvent)}
-              ></IonInput>
+              />
             </IonItem>
           </IonList>
         </IonContent>
         <IonFooter>
           <IonToolbar class="ion-text-center">
-            <Link color="primary" to={'/movimentacoes/adicionar'}>
+            <Link color="primary" to="/movimentacoes/adicionar">
               <IonButton fill="clear">
-                <IonIcon icon={addOutline}></IonIcon>
+                <IonIcon icon={addOutline} />
                 Adicionar
               </IonButton>
             </Link>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Redirect, Route } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import {
   IonApp,
   IonIcon,
@@ -39,35 +39,37 @@ import '@ionic/react/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 
-export default class App extends React.Component {
+interface AppState {
+  usuario: object;
+}
+
+export default class App extends React.Component<{}, AppState> {
   constructor(props: any) {
     super(props);
 
-    this.state = {
-      usuario: null,
-    };
+    this.setState({
+      usuario: {},
+    });
   }
 
-  openMenu() {
+  openMenu = () => {
     return menuController.open();
-  }
+  };
 
   renderRoutes() {
-    if (false) {
+    const { usuario } = this.state;
+
+    if (usuario) {
       return (
         <IonTabs>
           <IonRouterOutlet>
-            <Route
-              path="/movimentacoes"
-              component={Movimentacoes}
-              exact={true}
-            />
+            <Route path="/movimentacoes" component={Movimentacoes} exact />
             <Route
               path="/movimentacoes/adicionar"
               component={MovimentacoesAdicionar}
-              exact={true}
+              exact
             />
-            <Route path="/" component={Login} exact={true} />
+            <Route path="/" component={Login} exact />
           </IonRouterOutlet>
           <IonTabBar slot="bottom">
             <IonTabButton tab="movimentacoes" href="/movimentacoes">
@@ -83,13 +85,13 @@ export default class App extends React.Component {
 
     return (
       <IonRouterOutlet>
-        <Route path="/movimentacoes" component={Movimentacoes} exact={true} />
+        <Route path="/movimentacoes" component={Movimentacoes} exact />
         <Route
           path="/movimentacoes/adicionar"
           component={MovimentacoesAdicionar}
-          exact={true}
+          exact
         />
-        <Route path="/" component={Login} exact={true} />
+        <Route path="/" component={Login} exact />
       </IonRouterOutlet>
     );
   }

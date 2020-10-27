@@ -5,6 +5,7 @@
   "dependencies": {
     "@capacitor/android": "^2.4.0",
     "@capacitor/core": "2.4.0",
+    "@ionic/core": "^5.4.1",
     "@ionic/react": "^5.0.7",
     "@ionic/react-router": "^5.0.7",
     "@reduxjs/toolkit": "^1.4.0",
@@ -31,7 +32,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint . --ext .js,.tsx,.jsx --fix"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -50,9 +52,23 @@
   },
   "devDependencies": {
     "@capacitor/cli": "2.4.0",
+    "@typescript-eslint/eslint-plugin": "^4.6.0",
+    "@typescript-eslint/parser": "^4.6.0",
+    "babel-eslint": "^10.1.0",
+    "eslint": "6",
+    "eslint-config-airbnb": "^18.2.0",
+    "eslint-config-prettier": "^6.14.0",
+    "eslint-config-react-app": "^6.0.0",
+    "eslint-plugin-flowtype": "^5.2.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-react": "^7.21.5",
+    "eslint-plugin-react-hooks": "^4.2.0",
     "husky": ">=4",
     "lint-staged": ">=10",
-    "prettier": "2.1.2"
+    "prettier": "^2.1.2",
+    "react-app": "^1.1.2"
   },
   "description": "An Ionic project",
   "husky": {
@@ -61,6 +77,10 @@
     }
   },
   "lint-staged": {
+    "*.+(js|jsx|tsx|ts)": [
+      "yarn lint",
+      "git add"
+    ],
     "*.{js,css,md}": "prettier --write --ignore-unknown"
   }
 }
