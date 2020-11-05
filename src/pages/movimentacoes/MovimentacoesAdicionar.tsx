@@ -25,10 +25,10 @@ interface StateInterface {
 }
 
 export default class MovimentacoesAdicionar extends React.Component<
-  {},
+  unknown,
   StateInterface
 > {
-  constructor(props: any) {
+  constructor(props: unknown) {
     super(props);
 
     this.state = {
@@ -37,7 +37,7 @@ export default class MovimentacoesAdicionar extends React.Component<
     };
   }
 
-  formatMoney = (valorNumerico: number) => {
+  formatMoney = (valorNumerico: number): string => {
     return Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL',
@@ -45,7 +45,7 @@ export default class MovimentacoesAdicionar extends React.Component<
     }).format(valorNumerico);
   };
 
-  handleCurrencyInput(e: KeyboardEvent) {
+  handleCurrencyInput(e: KeyboardEvent): void {
     e.preventDefault();
 
     const keyEntered = e.key;
@@ -81,7 +81,7 @@ export default class MovimentacoesAdicionar extends React.Component<
     });
   }
 
-  render() {
+  render(): JSX.Element {
     const { valorFormatado } = this.state;
 
     return (

@@ -12,16 +12,31 @@ import {
 interface HeaderProps {
   titulo: string;
   defaultHref?: string;
+  disableBackButton?: boolean;
 }
 
-function Header(props: HeaderProps) {
-  const { defaultHref, titulo } = props;
+function renderBackButton(
+  disableBackButton: boolean | undefined,
+  defaultHref: string | undefined
+): JSX.Element {
+  if (disableBackButton) {
+    return <span />;
+  }
+
+  return (
+    <IonButtons slot="start">
+      <IonBackButton defaultHref={defaultHref} />
+    </IonButtons>
+  );
+}
+
+function Header(props: HeaderProps): JSX.Element {
+  const { defaultHref, titulo, disableBackButton } = props;
+
   return (
     <IonHeader>
       <IonToolbar>
-        <IonButtons slot="start">
-          <IonBackButton defaultHref={defaultHref} />
-        </IonButtons>
+        {renderBackButton(disableBackButton, defaultHref)}
         <IonRow>
           <IonCol size-lg="6" offset-lg="3">
             <IonTitle color="primary">{titulo}</IonTitle>
@@ -34,6 +49,7 @@ function Header(props: HeaderProps) {
 
 Header.defaultProps = {
   defaultHref: '',
+  disableBackButton: false,
 };
 
 export default Header;

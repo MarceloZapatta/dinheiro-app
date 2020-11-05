@@ -8,7 +8,7 @@ interface ItemProps {
   movimento: Movimento;
 }
 
-function Item(props: ItemProps) {
+function Item(props: ItemProps): JSX.Element {
   const { movimento } = props;
 
   return (

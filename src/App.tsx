@@ -16,7 +16,8 @@ import {
 import { menuController } from '@ionic/core';
 import { IonReactRouter } from '@ionic/react-router';
 import { cashOutline, menu } from 'ionicons/icons';
-import { Login } from './pages/auth/Login';
+import Login from './pages/auth/Login';
+import AlertErro from './components/AlertErro';
 import Movimentacoes from './pages/movimentacoes/Movimentacoes';
 import MovimentacoesAdicionar from './pages/movimentacoes/MovimentacoesAdicionar';
 
@@ -40,26 +41,26 @@ import '@ionic/react/css/display.css';
 import './theme/variables.css';
 
 interface AppState {
-  usuario: object;
+  usuario: Record<string, unknown>;
 }
 
-export default class App extends React.Component<{}, AppState> {
-  constructor(props: any) {
+export default class App extends React.Component<unknown, AppState> {
+  constructor(props: unknown) {
     super(props);
 
-    this.setState({
+    this.state = {
       usuario: {},
-    });
+    };
   }
 
-  openMenu = () => {
+  openMenu = (): Promise<boolean> => {
     return menuController.open();
   };
 
-  renderRoutes() {
+  renderRoutes(): JSX.Element {
     const { usuario } = this.state;
 
-    if (usuario) {
+    if (Object.keys(usuario).length > 0) {
       return (
         <IonTabs>
           <IonRouterOutlet>
@@ -96,9 +97,11 @@ export default class App extends React.Component<{}, AppState> {
     );
   }
 
-  render() {
-    return (
-      <IonApp>
+  renderMenu(): JSX.Element {
+    const { usuario } = this.state;
+
+    if (Object.keys(usuario).length > 0) {
+      return (
         <IonMenu side="start" menuId="first" contentId="menu-content">
           <IonContent id="menu-content">
             <IonList>
@@ -110,9 +113,20 @@ export default class App extends React.Component<{}, AppState> {
             </IonList>
           </IonContent>
         </IonMenu>
+      );
+    }
+
+    return <span />;
+  }
+
+  render(): JSX.Element {
+    return (
+      <IonApp>
+        {this.renderMenu()}
         <IonReactRouter>
           <IonRouterOutlet>{this.renderRoutes()}</IonRouterOutlet>
         </IonReactRouter>
+        <AlertErro />
       </IonApp>
     );
   }

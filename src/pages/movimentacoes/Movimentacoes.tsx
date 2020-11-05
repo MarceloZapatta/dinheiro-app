@@ -22,8 +22,8 @@ import Item from '../../components/movimento/Item';
 import Movimento from '../../model/Movimento';
 
 class Movimentacoes extends React.Component {
-  movimentos = () => {
-    const movimentos = [];
+  movimentos = (): JSX.Element[] => {
+    const movimentos: JSX.Element[] = [];
 
     for (let index = 0; index < 10; index += 1) {
       const movimento = new Movimento(
@@ -38,9 +38,9 @@ class Movimentacoes extends React.Component {
     return movimentos;
   };
 
-  render() {
+  render(): JSX.Element {
     return (
-      <IonPage>
+      <IonPage data-testid="movimentacoes-page">
         <Header titulo="Movimentações" />
         <IonContent>
           <IonGrid>
