@@ -5,23 +5,25 @@ export const alertErroSlice = createSlice({
   initialState: {
     value: {
       show: false,
-      header: 'Erro!',
-      message: 'Ocorreu um erro!',
+      titulo: 'Erro!',
+      mensagem: 'Ocorreu um erro!',
     },
   },
   reducers: {
     setShow: (state, action) => {
-      state.value.show = action.payload;
-    },
-    setMessage: (state, action) => {
-      state.value.message = action.payload;
-    },
-    setHeader: (state, action) => {
-      state.value.header = action.payload;
+      state.value.show = action.payload.show;
+
+      if (action.payload.titulo) {
+        state.value.mensagem = action.payload.mensagem;
+      }
+
+      if (action.payload.titulo) {
+        state.value.titulo = action.payload.titulo;
+      }
     },
   },
 });
 
-export const { setShow, setMessage, setHeader } = alertErroSlice.actions;
+export const { setShow } = alertErroSlice.actions;
 
 export default alertErroSlice.reducer;

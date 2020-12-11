@@ -39,13 +39,17 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import Cadastrar from './pages/auth/Cadastrar';
 
 interface AppState {
   usuario: Record<string, unknown>;
 }
 
-export default class App extends React.Component<unknown, AppState> {
-  constructor(props: unknown) {
+export default class App extends React.Component<
+  Record<string, unknown>,
+  AppState
+> {
+  constructor(props: Record<string, unknown>) {
     super(props);
 
     this.state = {
@@ -86,6 +90,7 @@ export default class App extends React.Component<unknown, AppState> {
 
     return (
       <IonRouterOutlet>
+        <Route path="/cadastrar" component={Cadastrar} exact />
         <Route path="/movimentacoes" component={Movimentacoes} exact />
         <Route
           path="/movimentacoes/adicionar"
@@ -122,9 +127,17 @@ export default class App extends React.Component<unknown, AppState> {
   render(): JSX.Element {
     return (
       <IonApp>
-        {this.renderMenu()}
         <IonReactRouter>
-          <IonRouterOutlet>{this.renderRoutes()}</IonRouterOutlet>
+          <IonRouterOutlet>
+            <Route exact path="/" component={Login} />
+            <Route exact path="/movimentacoes" component={Movimentacoes} />
+            <Route exact path="/cadastrar" component={Cadastrar} />
+            <Route
+              path="/movimentacoes/adicionar"
+              component={MovimentacoesAdicionar}
+              exact
+            />
+          </IonRouterOutlet>
         </IonReactRouter>
         <AlertErro />
       </IonApp>

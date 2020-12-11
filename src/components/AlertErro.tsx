@@ -19,8 +19,8 @@ export default class AlertErro extends React.Component<
 
     this.state = {
       show: alertErro.value.show,
-      header: alertErro.value.header,
-      mensagem: alertErro.value.message,
+      header: alertErro.value.titulo,
+      mensagem: alertErro.value.mensagem,
     };
 
     store.subscribe(this.handleAlertErroChange.bind(this));
@@ -39,8 +39,8 @@ export default class AlertErro extends React.Component<
     if (show !== alertErro.value.show) {
       this.setState({
         show: alertErro.value.show,
-        mensagem: alertErro.value.message,
-        header: alertErro.value.header,
+        header: alertErro.value.titulo,
+        mensagem: alertErro.value.mensagem,
       });
     }
   }

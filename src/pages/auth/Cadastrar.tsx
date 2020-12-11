@@ -1,118 +1,51 @@
-import React from 'react';
 import {
-  IonContent,
-  IonPage,
-  IonRow,
+  IonButton,
   IonCol,
+  IonContent,
   IonGrid,
   IonInput,
   IonItem,
-  IonButton,
   IonLabel,
+  IonPage,
+  IonRouterLink,
+  IonRow,
   IonText,
 } from '@ionic/react';
-
-import './Login.css';
-
+import React from 'react';
 import Header from '../../components/Header';
 
-import Dinheiro from '../../services/Dinheiro';
-import store from '../../store';
-
-import { setShow } from '../../store/reducers/alertErroReducer';
-
-interface LoginState {
+interface CadastrarState {
   email: string;
   password: string;
+  nome: string;
   emailInvalido: boolean;
   passwordInvalido: boolean;
+  nomeInvalido: boolean;
 }
 
-export default class Login extends React.Component<any, LoginState> {
+export default class Cadastrar extends React.Component<any, CadastrarState> {
   constructor(props: any) {
     super(props);
 
     this.state = {
       email: '',
-      emailInvalido: false,
       password: '',
+      nome: '',
+      emailInvalido: false,
       passwordInvalido: false,
+      nomeInvalido: false,
     };
   }
 
-  login(): boolean {
-    if (!this.validarCampos()) {
-      store.dispatch(
-        setShow({
-          show: true,
-          mensagem: 'Campos inválidos!',
-        })
-      );
-      return false;
-    }
-
-    const { email, password } = this.state;
-
-    // FETCH NA API
-    const dinheiro = new Dinheiro();
-
-    dinheiro.login(email, password).then((response) => {
-      const { history } = this.props;
-
-      if (response.sucesso !== true) {
-        store.dispatch(
-          setShow({
-            show: true,
-            mensagem: response.mensagem,
-          })
-        );
-
-        return false;
-      }
-
-      history.push('/movimentacoes');
-
-      return true;
-    });
-
-    return true;
+  cadastrar(): string {
+    const { email, password, nome } = this.state;
+    return email + password + nome;
   }
 
-  validarCampos(): boolean {
-    const { email, password } = this.state;
+  isNomeInvalido(): boolean {
+    const { nomeInvalido } = this.state;
 
-    this.setState({
-      emailInvalido: false,
-      passwordInvalido: false,
-    });
-
-    const emailRegex = /\S+@\S+/;
-
-    if (!email) {
-      this.setState({
-        emailInvalido: true,
-      });
-
-      return false;
-    }
-
-    if (!emailRegex.test(email)) {
-      this.setState({
-        emailInvalido: true,
-      });
-
-      return false;
-    }
-
-    if (!password) {
-      this.setState({
-        passwordInvalido: true,
-      });
-
-      return false;
-    }
-
-    return true;
+    return nomeInvalido;
   }
 
   isPasswordInvalido(): boolean {
@@ -158,11 +91,26 @@ export default class Login extends React.Component<any, LoginState> {
   render(): JSX.Element {
     return (
       <IonPage data-testid="login-page">
-        <Header titulo="Entrar" disableBackButton />
+        <Header titulo="Cadastrar" disableBackButton />
         <IonContent>
           <IonGrid>
             <IonRow class="ion-margin-top">
               <IonCol size-lg="4" offset-lg="4">
+                <IonItem>
+                  <IonLabel position="floating">Nome</IonLabel>
+                  <IonInput
+                    type="text"
+                    title="Nome"
+                    color={this.isNomeInvalido() ? 'danger' : ''}
+                    data-testid="nome-input"
+                    onIonChange={(e) =>
+                      this.setState({
+                        nome: String(e.detail.value),
+                      })
+                    }
+                  />
+                </IonItem>
+                {this.renderPasswordInvalido()}
                 <IonItem>
                   <IonLabel position="floating">E-mail</IonLabel>
                   <IonInput
@@ -170,6 +118,7 @@ export default class Login extends React.Component<any, LoginState> {
                     title="E-mail"
                     color={this.isEmailInvalido() ? 'danger' : ''}
                     data-testid="email-input"
+                    autofocus
                     onIonChange={(e) =>
                       this.setState({
                         email: String(e.detail.value),
@@ -194,22 +143,23 @@ export default class Login extends React.Component<any, LoginState> {
                 </IonItem>
                 {this.renderPasswordInvalido()}
                 <IonButton
-                  title="Entrar"
+                  title="Cadastrar"
                   expand="block"
-                  data-testid="entrar-button"
-                  onClick={() => this.login()}
+                  data-testid="cadastrar-button"
+                  onClick={() => this.cadastrar()}
                 >
-                  Entrar
+                  Cadastrar
                 </IonButton>
-                <IonButton
-                  title="Registrar"
-                  expand="block"
-                  fill="clear"
-                  data-testid="registrar-button"
-                  routerLink="/cadastrar"
-                >
-                  Ainda não possui uma conta? Registre-se aqui!
-                </IonButton>
+                <IonRouterLink routerLink="/">
+                  <IonButton
+                    title="Cadastrar"
+                    expand="block"
+                    fill="clear"
+                    data-testid="cadastrar-button"
+                  >
+                    Já possui conta? Entrar aqui!
+                  </IonButton>
+                </IonRouterLink>
               </IonCol>
             </IonRow>
           </IonGrid>

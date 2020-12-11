@@ -1,3 +1,6 @@
+import store from '../store';
+import { setShow } from '../store/reducers/alertErroReducer';
+
 export default class Dinheiro {
   baseUrl = process.env.REACT_APP_URL_API || '';
 
@@ -15,8 +18,17 @@ export default class Dinheiro {
         return response.json();
       })
       .catch((error) => {
-        // eslint-disable-next-line
-        console.error(error);
+        if (!error.response) {
+          store.dispatch(
+            setShow({
+              show: true,
+              mensagem:
+                'Não foi possível conectar, tente novamente mais tarde.',
+            })
+          );
+
+          return false;
+        }
 
         return error.json();
       });
