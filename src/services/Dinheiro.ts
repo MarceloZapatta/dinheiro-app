@@ -1,36 +1,60 @@
-import store from '../store';
-import { setShow } from '../store/reducers/alertErroReducer';
+interface DinheiroResponse {
+  sucesso: boolean;
+  statusCode: number;
+  data: Record<string, unknown>;
+  mensagem: string;
+}
 
 export default class Dinheiro {
-  baseUrl = process.env.REACT_APP_URL_API || '';
+  baseUrl = process.env.REACT_APP_URL_API;
 
-  login(email: string, password: string): Promise<Record<string, unknown>> {
+  async login(email: string, senha: string): Promise<DinheiroResponse> {
     const formData = new FormData();
 
     formData.append('email', email);
-    formData.append('password', password);
+    formData.append('senha', senha);
 
-    return fetch(`${this.baseUrl}v1/auth/login`, {
-      method: 'POST',
-      body: formData,
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .catch((error) => {
-        if (!error.response) {
-          store.dispatch(
-            setShow({
-              show: true,
-              mensagem:
-                'Não foi possível conectar, tente novamente mais tarde.',
-            })
-          );
-
-          return false;
-        }
-
-        return error.json();
+    try {
+      const response = await fetch(`${this.baseUrl}v1/auth/login`, {
+        method: 'POST',
+        body: formData,
       });
+      return await response.json();
+    } catch (error) {
+      return {
+        sucesso: false,
+        mensagem: error.message,
+        statusCode: error.statusCode,
+        data: {},
+      };
+    }
+  }
+
+  async cadastrar(
+    nome: string,
+    email: string,
+    senha: string
+  ): Promise<DinheiroResponse> {
+    const formData = new FormData();
+
+    formData.append('nome', nome);
+    formData.append('email', email);
+    formData.append('senha', senha);
+
+    try {
+      const response = await fetch(`${this.baseUrl}v1/auth/cadastrar`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      return await response.json();
+    } catch (error) {
+      return {
+        sucesso: false,
+        mensagem: error.message,
+        statusCode: error.statusCode,
+        data: {},
+      };
+    }
   }
 }

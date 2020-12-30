@@ -53,13 +53,16 @@ export default class Login extends React.Component<any, LoginState> {
 
     const { email, password } = this.state;
 
-    // FETCH NA API
     const dinheiro = new Dinheiro();
 
     dinheiro.login(email, password).then((response) => {
       const { history } = this.props;
 
       if (response.sucesso !== true) {
+        if (response.mensagem === 'Network request failed') {
+          response.mensagem = 'Erro de conexão. Tente novamente mais tarde.';
+        }
+
         store.dispatch(
           setShow({
             show: true,
@@ -208,7 +211,7 @@ export default class Login extends React.Component<any, LoginState> {
                   data-testid="registrar-button"
                   routerLink="/cadastrar"
                 >
-                  Ainda não possui uma conta? Registre-se aqui!
+                  Novo por aqui? Registre-se!
                 </IonButton>
               </IonCol>
             </IonRow>

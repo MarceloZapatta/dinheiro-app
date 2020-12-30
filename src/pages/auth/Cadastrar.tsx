@@ -11,15 +11,19 @@ import {
   IonRow,
   IonText,
 } from '@ionic/react';
+
 import React from 'react';
 import Header from '../../components/Header';
+import Dinheiro from '../../services/Dinheiro';
+import store from '../../store';
+import { setShow } from '../../store/reducers/alertErroReducer';
 
 interface CadastrarState {
   email: string;
-  password: string;
+  senha: string;
   nome: string;
   emailInvalido: boolean;
-  passwordInvalido: boolean;
+  senhaInvalida: boolean;
   nomeInvalido: boolean;
 }
 
@@ -29,39 +33,122 @@ export default class Cadastrar extends React.Component<any, CadastrarState> {
 
     this.state = {
       email: '',
-      password: '',
+      senha: '',
       nome: '',
       emailInvalido: false,
-      passwordInvalido: false,
+      senhaInvalida: false,
       nomeInvalido: false,
     };
   }
 
-  cadastrar(): string {
-    const { email, password, nome } = this.state;
-    return email + password + nome;
+  cadastrar(): boolean {
+    const { email, senha, nome } = this.state;
+
+    if (!this.validarCampos()) {
+      store.dispatch(
+        setShow({
+          show: true,
+          mensagem: 'Campos inválidos!',
+        })
+      );
+
+      return false;
+    }
+
+    const dinheiro = new Dinheiro();
+
+    dinheiro.cadastrar(nome, email, senha).then((response) => {
+      const { history } = this.props;
+
+      if (response.sucesso !== true) {
+        if (response.mensagem === 'Network request failed') {
+          response.mensagem = 'Erro de conexão. Tente novamente mais tarde.';
+        }
+
+        store.dispatch(
+          setShow({
+            show: true,
+            mensagem: response.mensagem,
+          })
+        );
+
+        return false;
+      }
+
+      history.push('/movimentacoes');
+
+      return true;
+    });
+
+    return true;
   }
 
-  isNomeInvalido(): boolean {
+  validarCampos(): boolean {
+    const { nome, email, senha } = this.state;
+
+    this.setState({
+      nomeInvalido: false,
+      emailInvalido: false,
+      senhaInvalida: false,
+    });
+
+    if (!nome) {
+      this.setState({
+        nomeInvalido: true,
+      });
+
+      return false;
+    }
+
+    const emailRegex = /\S+@\S+/;
+
+    if (!email) {
+      this.setState({
+        emailInvalido: true,
+      });
+
+      return false;
+    }
+
+    if (!emailRegex.test(email)) {
+      this.setState({
+        emailInvalido: true,
+      });
+
+      return false;
+    }
+
+    if (!senha) {
+      this.setState({
+        senhaInvalida: true,
+      });
+
+      return false;
+    }
+
+    return true;
+  }
+
+  renderNomeInvalido(): JSX.Element {
     const { nomeInvalido } = this.state;
 
-    return nomeInvalido;
-  }
+    if (nomeInvalido) {
+      return (
+        <IonItem>
+          <IonText color="danger" data-testid="nome-invalido-text">
+            <p>Nome inválido.</p>
+          </IonText>
+        </IonItem>
+      );
+    }
 
-  isPasswordInvalido(): boolean {
-    const { passwordInvalido } = this.state;
-
-    return passwordInvalido;
-  }
-
-  isEmailInvalido(): boolean {
-    const { emailInvalido } = this.state;
-
-    return emailInvalido;
+    return <span />;
   }
 
   renderEmailInvalido(): JSX.Element {
-    if (this.isEmailInvalido()) {
+    const { emailInvalido } = this.state;
+
+    if (emailInvalido) {
       return (
         <IonItem>
           <IonText color="danger" data-testid="email-invalido-text">
@@ -74,11 +161,13 @@ export default class Cadastrar extends React.Component<any, CadastrarState> {
     return <span />;
   }
 
-  renderPasswordInvalido(): JSX.Element {
-    if (this.isPasswordInvalido()) {
+  renderSenhaInvalido(): JSX.Element {
+    const { senhaInvalida } = this.state;
+
+    if (senhaInvalida) {
       return (
         <IonItem>
-          <IonText color="danger" data-testid="password-invalido-text">
+          <IonText color="danger" data-testid="senha-invalido-text">
             <p>Senha inválida.</p>
           </IonText>
         </IonItem>
@@ -89,8 +178,10 @@ export default class Cadastrar extends React.Component<any, CadastrarState> {
   }
 
   render(): JSX.Element {
+    const { emailInvalido, senhaInvalida, nomeInvalido } = this.state;
+
     return (
-      <IonPage data-testid="login-page">
+      <IonPage data-testid="cadastrar-page">
         <Header titulo="Cadastrar" disableBackButton />
         <IonContent>
           <IonGrid>
@@ -101,7 +192,7 @@ export default class Cadastrar extends React.Component<any, CadastrarState> {
                   <IonInput
                     type="text"
                     title="Nome"
-                    color={this.isNomeInvalido() ? 'danger' : ''}
+                    color={nomeInvalido ? 'danger' : ''}
                     data-testid="nome-input"
                     onIonChange={(e) =>
                       this.setState({
@@ -110,13 +201,13 @@ export default class Cadastrar extends React.Component<any, CadastrarState> {
                     }
                   />
                 </IonItem>
-                {this.renderPasswordInvalido()}
+                {this.renderNomeInvalido()}
                 <IonItem>
                   <IonLabel position="floating">E-mail</IonLabel>
                   <IonInput
                     type="email"
                     title="E-mail"
-                    color={this.isEmailInvalido() ? 'danger' : ''}
+                    color={emailInvalido ? 'danger' : ''}
                     data-testid="email-input"
                     autofocus
                     onIonChange={(e) =>
@@ -132,16 +223,16 @@ export default class Cadastrar extends React.Component<any, CadastrarState> {
                   <IonInput
                     type="password"
                     title="Senha"
-                    color={this.isPasswordInvalido() ? 'danger' : ''}
+                    color={senhaInvalida ? 'danger' : ''}
                     data-testid="senha-input"
                     onIonChange={(e) =>
                       this.setState({
-                        password: String(e.detail.value),
+                        senha: String(e.detail.value),
                       })
                     }
                   />
                 </IonItem>
-                {this.renderPasswordInvalido()}
+                {this.renderSenhaInvalido()}
                 <IonButton
                   title="Cadastrar"
                   expand="block"
@@ -155,9 +246,9 @@ export default class Cadastrar extends React.Component<any, CadastrarState> {
                     title="Cadastrar"
                     expand="block"
                     fill="clear"
-                    data-testid="cadastrar-button"
+                    data-testid="possui-conta-button"
                   >
-                    Já possui conta? Entrar aqui!
+                    Já possui conta? Entrar!
                   </IonButton>
                 </IonRouterLink>
               </IonCol>

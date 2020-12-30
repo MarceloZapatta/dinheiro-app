@@ -13,7 +13,7 @@ export const alertErroSlice = createSlice({
     setShow: (state, action) => {
       state.value.show = action.payload.show;
 
-      if (action.payload.titulo) {
+      if (action.payload.mensagem) {
         state.value.mensagem = action.payload.mensagem;
       }
 
