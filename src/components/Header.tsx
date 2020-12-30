@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   IonHeader,
   IonToolbar,
@@ -32,6 +32,11 @@ function renderBackButton(
 
 function Header(props: HeaderProps): JSX.Element {
   const { defaultHref, titulo, disableBackButton } = props;
+
+  useEffect(() => {
+    // Atualiza o titulo do documento usando a API do browser
+    document.title = `${titulo} - Poupis`;
+  });
 
   return (
     <IonHeader>

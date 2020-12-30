@@ -165,7 +165,7 @@ export default class Login extends React.Component<any, LoginState> {
         <IonContent>
           <IonGrid>
             <IonRow class="ion-margin-top">
-              <IonCol size-lg="4" offset-lg="4">
+              <IonCol size-lg="4" offset-lg="4" size-md="8" offset-md="2">
                 <IonItem>
                   <IonLabel position="floating">E-mail</IonLabel>
                   <IonInput

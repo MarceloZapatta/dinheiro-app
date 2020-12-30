@@ -130,7 +130,7 @@ test('realiza o cadastro', async () => {
   fireEvent.click(cadastrarButton);
 
   await wait(() =>
-    expect(history.push.mock.calls[0][0]).toBe('/movimentacoes')
+    expect(history.push.mock.calls[0][0]).toBe('/verificacao-email')
   );
 });
 

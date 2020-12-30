@@ -87,8 +87,7 @@
   "lint-staged": {
     "*.+(js|jsx|tsx|ts)": [
       "yarn lint",
-      "prettier --write --ignore-unknown",
-      "git add"
+      "prettier --write --ignore-unknown"
     ]
   }
 }

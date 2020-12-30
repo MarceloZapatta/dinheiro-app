@@ -75,7 +75,7 @@ export default class Cadastrar extends React.Component<any, CadastrarState> {
         return false;
       }
 
-      history.push('/movimentacoes');
+      history.push('/verificacao-email');
 
       return true;
     });
@@ -186,7 +186,7 @@ export default class Cadastrar extends React.Component<any, CadastrarState> {
         <IonContent>
           <IonGrid>
             <IonRow class="ion-margin-top">
-              <IonCol size-lg="4" offset-lg="4">
+              <IonCol size-lg="4" offset-lg="4" size-md="8" offset-md="2">
                 <IonItem>
                   <IonLabel position="floating">Nome</IonLabel>
                   <IonInput

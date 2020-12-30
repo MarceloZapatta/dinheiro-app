@@ -40,6 +40,7 @@ import '@ionic/react/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 import Cadastrar from './pages/auth/Cadastrar';
+import VerificacaoEmailEnviado from './pages/auth/VerificacaoEmailEnviado';
 
 interface AppState {
   usuario: Record<string, unknown>;
@@ -130,6 +131,11 @@ export default class App extends React.Component<
         <IonReactRouter>
           <IonRouterOutlet>
             <Route exact path="/" component={Login} />
+            <Route
+              exact
+              path="/verificacao-email"
+              component={VerificacaoEmailEnviado}
+            />
             <Route exact path="/movimentacoes" component={Movimentacoes} />
             <Route exact path="/cadastrar" component={Cadastrar} />
             <Route
