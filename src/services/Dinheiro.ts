@@ -1,8 +1,10 @@
 interface DinheiroResponse {
   sucesso: boolean;
-  statusCode: number;
+  // eslint-disable-next-line camelcase
+  status_codigo: number;
   data: Record<string, unknown>;
   mensagem: string;
+  erros?: Record<string, unknown>[];
 }
 
 export default class Dinheiro {
@@ -24,7 +26,7 @@ export default class Dinheiro {
       return {
         sucesso: false,
         mensagem: error.message,
-        statusCode: error.statusCode,
+        status_codigo: error.statusCode,
         data: {},
       };
     }
@@ -52,7 +54,7 @@ export default class Dinheiro {
       return {
         sucesso: false,
         mensagem: error.message,
-        statusCode: error.statusCode,
+        status_codigo: error.statusCode,
         data: {},
       };
     }

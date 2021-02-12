@@ -13,6 +13,7 @@ import {
 } from '@ionic/react';
 
 import React from 'react';
+import { RouteComponentProps } from 'react-router';
 import Header from '../../components/Header';
 import Dinheiro from '../../services/Dinheiro';
 import store from '../../store';
@@ -25,10 +26,18 @@ interface CadastrarState {
   emailInvalido: boolean;
   senhaInvalida: boolean;
   nomeInvalido: boolean;
+  emailJaUtilizado: boolean;
 }
 
-export default class Cadastrar extends React.Component<any, CadastrarState> {
-  constructor(props: any) {
+interface CadastrarProps {
+  history: RouteComponentProps['history'];
+}
+
+export default class Cadastrar extends React.Component<
+  CadastrarProps,
+  CadastrarState
+> {
+  constructor(props: CadastrarProps) {
     super(props);
 
     this.state = {
@@ -38,11 +47,18 @@ export default class Cadastrar extends React.Component<any, CadastrarState> {
       emailInvalido: false,
       senhaInvalida: false,
       nomeInvalido: false,
+      emailJaUtilizado: false,
     };
   }
 
   cadastrar(): boolean {
     const { email, senha, nome } = this.state;
+
+    this.setState({
+      emailInvalido: false,
+      emailJaUtilizado: false,
+      senhaInvalida: false,
+    });
 
     if (!this.validarCampos()) {
       store.dispatch(
@@ -63,6 +79,38 @@ export default class Cadastrar extends React.Component<any, CadastrarState> {
       if (response.sucesso !== true) {
         if (response.mensagem === 'Network request failed') {
           response.mensagem = 'Erro de conexão. Tente novamente mais tarde.';
+        }
+
+        if (response.status_codigo === 422 && response.erros) {
+          if (Object.keys(response.erros).length > 0) {
+            if ('email' in response.erros) {
+              if (
+                response.erros[Object.keys(response.erros)[0]][0] ===
+                'O valor informado para o campo e-mail já está em uso.'
+              ) {
+                return this.setState({
+                  emailJaUtilizado: true,
+                });
+              }
+
+              return this.setState({
+                emailInvalido: true,
+              });
+            }
+
+            if ('senha' in response.erros) {
+              return this.setState({
+                senhaInvalida: true,
+              });
+            }
+          }
+
+          return store.dispatch(
+            setShow({
+              show: true,
+              mensagem: response.mensagem,
+            })
+          );
         }
 
         store.dispatch(
@@ -146,7 +194,17 @@ export default class Cadastrar extends React.Component<any, CadastrarState> {
   }
 
   renderEmailInvalido(): JSX.Element {
-    const { emailInvalido } = this.state;
+    const { emailInvalido, emailJaUtilizado } = this.state;
+
+    if (emailJaUtilizado) {
+      return (
+        <IonItem>
+          <IonText color="danger" data-testid="email-ja-utilizado-text">
+            <small>O e-mail já foi utilizado.</small>
+          </IonText>
+        </IonItem>
+      );
+    }
 
     if (emailInvalido) {
       return (
