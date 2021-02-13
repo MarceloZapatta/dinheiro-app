@@ -14,6 +14,7 @@ import {
 
 import './Login.css';
 
+import { RouteComponentProps } from 'react-router';
 import Header from '../../components/Header';
 
 import Dinheiro from '../../services/Dinheiro';
@@ -28,8 +29,12 @@ interface LoginState {
   passwordInvalido: boolean;
 }
 
-export default class Login extends React.Component<any, LoginState> {
-  constructor(props: any) {
+interface LoginProps {
+  history: RouteComponentProps['history'];
+}
+
+export default class Login extends React.Component<LoginProps, LoginState> {
+  constructor(props: LoginProps) {
     super(props);
 
     this.state = {

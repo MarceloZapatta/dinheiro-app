@@ -3,8 +3,31 @@ import { render, wait } from '@testing-library/react';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import { ionFireEvent as fireEvent } from '@ionic/react-test-utils';
+import { Action } from 'history';
 import store from '../../store';
 import Login from './Login';
+
+const action: Action = 'PUSH';
+const location = {
+  pathname: '',
+  hash: '',
+  search: '',
+  state: '',
+};
+
+const history = {
+  push: jest.fn(),
+  length: 0,
+  action,
+  location,
+  replace: jest.fn(),
+  go: jest.fn(),
+  goBack: jest.fn(),
+  goForward: jest.fn(),
+  block: jest.fn(),
+  listen: jest.fn(),
+  createHref: jest.fn(),
+};
 
 const server = setupServer(
   rest.post('http://127.0.0.1:8000/v1/auth/login', (req, res, ctx) => {
@@ -21,12 +44,12 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 test('renders without crashing', () => {
-  const { baseElement } = render(<Login />);
+  const { baseElement } = render(<Login history={history} />);
   expect(baseElement).toBeDefined();
 });
 
 test('e-mail obrigatorio', async () => {
-  const { findByTestId } = render(<Login />);
+  const { findByTestId } = render(<Login history={history} />);
 
   const loginPage = await findByTestId('login-page');
 
@@ -42,7 +65,7 @@ test('e-mail obrigatorio', async () => {
 });
 
 test('e-mail invalido', async () => {
-  const { findByTestId } = render(<Login />);
+  const { findByTestId } = render(<Login history={history} />);
 
   const loginPage = await findByTestId('login-page');
 
@@ -63,7 +86,7 @@ test('e-mail invalido', async () => {
 });
 
 test('senha inválida', async () => {
-  const { findByTestId } = render(<Login />);
+  const { findByTestId } = render(<Login history={history} />);
 
   const loginPage = await findByTestId('login-page');
 
@@ -82,10 +105,6 @@ test('senha inválida', async () => {
 });
 
 test('realiza o login', async () => {
-  const history = {
-    push: jest.fn(),
-  };
-
   const { findByTestId } = render(<Login history={history} />);
 
   const loginPage = await findByTestId('login-page');
@@ -119,7 +138,7 @@ test('login inválido', async () => {
     })
   );
 
-  const { findByTestId } = render(<Login />);
+  const { findByTestId } = render(<Login history={history} />);
 
   const loginPage = await findByTestId('login-page');
 
@@ -141,7 +160,9 @@ test('login inválido', async () => {
 
   await wait(() => {
     expect(store.dispatch).toBeCalledTimes(1);
-    expect(JSON.stringify(store.dispatch.mock.calls[0][0])).toBe(mensagemErro);
+    expect(JSON.stringify((store.dispatch as jest.Mock).mock.calls[0][0])).toBe(
+      mensagemErro
+    );
   });
 });
 
@@ -154,7 +175,7 @@ test('sem conexao com o server', async () => {
     })
   );
 
-  const { findByTestId } = render(<Login />);
+  const { findByTestId } = render(<Login history={history} />);
 
   const loginPage = await findByTestId('login-page');
 
@@ -179,7 +200,9 @@ test('sem conexao com o server', async () => {
 
   await wait(() => {
     expect(store.dispatch).toBeCalledTimes(1);
-    expect(JSON.stringify(store.dispatch.mock.calls[0][0])).toBe(mensagemErro);
+    expect(JSON.stringify((store.dispatch as jest.Mock).mock.calls[0][0])).toBe(
+      mensagemErro
+    );
   });
 });
 
@@ -188,7 +211,7 @@ test('modificou os campos', async () => {
 
   const setStateSpy = jest.spyOn(Login.prototype, 'setState');
 
-  const { findByTestId } = render(<Login />);
+  const { findByTestId } = render(<Login history={history} />);
 
   const loginPage = await findByTestId('login-page');
 
