@@ -17,9 +17,8 @@ import './Login.css';
 import { RouteComponentProps } from 'react-router';
 import Header from '../../components/Header';
 
-import Dinheiro from '../../services/Dinheiro';
+import Dinheiro from '../../services/DinheiroService';
 import store from '../../store';
-
 import { setShow } from '../../store/reducers/alertErroReducer';
 
 interface LoginState {
@@ -43,6 +42,34 @@ export default class Login extends React.Component<LoginProps, LoginState> {
       password: '',
       passwordInvalido: false,
     };
+
+    this.mostrarMensagens();
+  }
+
+  mostrarMensagens(): void {
+    const { history } = this.props;
+    const urlSearchParams = new URLSearchParams(history.location.search);
+    const sucesso = urlSearchParams.get('sucesso');
+    const erro = urlSearchParams.get('erro');
+
+    if (sucesso) {
+      store.dispatch(
+        setShow({
+          show: true,
+          titulo: 'Sucesso!',
+          mensagem: sucesso,
+        })
+      );
+    }
+
+    if (erro) {
+      store.dispatch(
+        setShow({
+          show: true,
+          mensagem: erro,
+        })
+      );
+    }
   }
 
   login(): boolean {

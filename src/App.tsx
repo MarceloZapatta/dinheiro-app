@@ -132,7 +132,7 @@ export default class App extends React.Component<
           <IonRouterOutlet>
             <Route exact path="/" component={Login} />
             <Route
-              path="/verificacao-email/{token}"
+              path="/verificacao-email"
               component={VerificacaoEmailEnviado}
             />
             <Route exact path="/movimentacoes" component={Movimentacoes} />

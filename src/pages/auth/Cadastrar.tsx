@@ -3,317 +3,287 @@ import {
   IonCol,
   IonContent,
   IonGrid,
-  IonInput,
+  // IonInput,
   IonItem,
   IonLabel,
+  IonList,
+  IonListHeader,
   IonPage,
+  IonRadio,
+  IonRadioGroup,
   IonRouterLink,
   IonRow,
-  IonText,
+  IonSpinner,
+  // IonText,
 } from '@ionic/react';
+import { Form, Formik } from 'formik';
 
 import React from 'react';
-import { RouteComponentProps } from 'react-router';
+import { useHistory } from 'react-router';
+import CadastrarConsultorForm from '../../components/auth/cadastrar/CadastrarConsultorForm';
+import CadastrarPessoaFisicaForm from '../../components/auth/cadastrar/CadastrarPessoaFisicaForm';
+import CadastrarPessoaJuridicaForm from '../../components/auth/cadastrar/CadastrarPessoaJuridicaForm';
+import ErrorField from '../../components/ErrorField';
+// import { RouteComponentProps } from 'react-router';
+// import ErrorField from '../../components/ErrorField';
 import Header from '../../components/Header';
-import Dinheiro from '../../services/Dinheiro';
-import store from '../../store';
-import { setShow } from '../../store/reducers/alertErroReducer';
+import DinheiroService from '../../services/DinheiroService';
+// import Dinheiro from '../../services/Dinheiro';
+// import store from '../../store';
+// import { setShow } from '../../store/reducers/alertErroReducer';
 
-interface CadastrarState {
-  email: string;
-  senha: string;
-  nome: string;
-  emailInvalido: boolean;
-  senhaInvalida: boolean;
-  nomeInvalido: boolean;
-  emailJaUtilizado: boolean;
+// interface CadastrarState {
+//   email: string;
+//   senha: string;
+//   nome: string;
+//   emailInvalido: boolean;
+//   senhaInvalida: boolean;
+//   nomeInvalido: boolean;
+//   emailJaUtilizado: boolean;
+// }
+
+export interface CadastrarValues {
+  organizacaoTipoId?: number | string | null;
+  documento?: string;
+  nome?: string;
+  nomeFantasia?: string;
+  email?: string;
+  senha?: string;
+  confirmarSenha?: string;
+  consultor?: number | string;
+  consultorResumo?: string;
 }
 
-interface CadastrarProps {
-  history: RouteComponentProps['history'];
-}
+// interface CadastrarProps {
+//   history: RouteComponentProps['history'];
+// }
 
-export default class Cadastrar extends React.Component<
-  CadastrarProps,
-  CadastrarState
-> {
-  constructor(props: CadastrarProps) {
-    super(props);
+export default function Cadastrar(): JSX.Element {
+  const history = useHistory();
 
-    this.state = {
-      email: '',
-      senha: '',
-      nome: '',
-      emailInvalido: false,
-      senhaInvalida: false,
-      nomeInvalido: false,
-      emailJaUtilizado: false,
-    };
-  }
-
-  cadastrar(): boolean {
-    const { email, senha, nome } = this.state;
-
-    this.setState({
-      emailInvalido: false,
-      emailJaUtilizado: false,
-      senhaInvalida: false,
-    });
-
-    if (!this.validarCampos()) {
-      store.dispatch(
-        setShow({
-          show: true,
-          mensagem: 'Campos inválidos!',
-        })
-      );
-
-      return false;
-    }
-
-    const dinheiro = new Dinheiro();
-
-    dinheiro.cadastrar(nome, email, senha).then((response) => {
-      const { history } = this.props;
-
-      if (response.sucesso !== true) {
-        if (response.mensagem === 'Network request failed') {
-          response.mensagem = 'Erro de conexão. Tente novamente mais tarde.';
-        }
-
-        if (response.status_codigo === 422 && response.erros) {
-          if (Object.keys(response.erros).length > 0) {
-            if ('email' in response.erros) {
-              if (
-                response.erros[Object.keys(response.erros)[0]][0] ===
-                'O valor informado para o campo e-mail já está em uso.'
-              ) {
-                return this.setState({
-                  emailJaUtilizado: true,
-                });
-              }
-
-              return this.setState({
-                emailInvalido: true,
-              });
-            }
-
-            if ('senha' in response.erros) {
-              return this.setState({
-                senhaInvalida: true,
-              });
-            }
+  function handleSubmit(
+    values: CadastrarValues,
+    { setSubmitting, setErrors }: any
+  ) {
+    const dinheiroService = new DinheiroService();
+    return dinheiroService
+      .cadastrar(values)
+      .then((response) => {
+        console.log(response, 'estou aaqq');
+        if (response.sucesso !== true) {
+          if (response.mensagem === 'Network request failed') {
+            response.mensagem = 'Erro de conexão. Tente novamente mais tarde.';
           }
 
-          return store.dispatch(
-            setShow({
-              show: true,
-              mensagem: response.mensagem,
-            })
-          );
+          if (response.status_codigo === 422 && response.erros) {
+            console.log(response.status_codigo, response.erros);
+            if (Object.keys(response.erros).length > 0) {
+              setErrors(dinheiroService.transformDinheiroErros(response.erros));
+            }
+          }
+        } else {
+          history.push('/verificacao-email');
         }
 
-        store.dispatch(
-          setShow({
-            show: true,
-            mensagem: response.mensagem,
-          })
-        );
+        setSubmitting(false);
+      })
+      .catch((error) => {
+        if (
+          error.response.data &&
+          error.response.data.status_codigo === 422 &&
+          error.response.data.erros
+        ) {
+          if (Object.keys(error.response.data.erros).length > 0) {
+            const erros = dinheiroService.transformDinheiroErros(
+              error.response.data.erros
+            );
 
-        return false;
+            setErrors(erros);
+          }
+        }
+        setSubmitting(false);
+      });
+  }
+
+  function handleValidate(values: CadastrarValues) {
+    const erros: CadastrarValues = {};
+
+    if (!values.organizacaoTipoId) {
+      erros.organizacaoTipoId = 'O tipo de pessoa é obrigatório.';
+    }
+
+    if (values.organizacaoTipoId === 1) {
+      if (!values.nome) {
+        erros.nome = 'O nome é obrigatório.';
       }
+    } else if (values.organizacaoTipoId === 2) {
+      if (!values.nomeFantasia) {
+        erros.nomeFantasia = 'O nome fantasia é obrigatório.';
+      } else if (!values.documento) {
+        erros.documento = 'O CNPJ é obrigatório.';
+      } else if (!values.nome) {
+        erros.nome = 'O nome do responsável é obrigatório.';
+      }
+    } else {
+      erros.organizacaoTipoId = 'O campo é obrigatório.';
+    }
 
-      history.push('/verificacao-email');
+    if (!values.email) {
+      erros.email = 'O e-mail é obrigatório.';
+    } else if (!/\S+@\S+/.test(values.email)) {
+      erros.email = 'O e-mail é inválido.';
+    } else if (!values.senha) {
+      erros.senha = 'A senha é obrigatória.';
+    } else if (!values.confirmarSenha) {
+      erros.confirmarSenha = 'A confirmação da senha é obrigatória.';
+    } else if (values.senha !== values.confirmarSenha) {
+      erros.senha = 'As senhas não correspondem.';
+      erros.confirmarSenha = 'As senhas não correspondem.';
+    }
 
-      return true;
-    });
+    if (values.consultor !== 1 && values.consultor !== 0) {
+      erros.consultor = 'O campo é obrigatório.';
+    }
 
-    return true;
+    if (values.consultor && !values.consultorResumo) {
+      erros.consultorResumo = 'O resumo é obrigatório';
+    }
+
+    return erros;
   }
 
-  validarCampos(): boolean {
-    const { nome, email, senha } = this.state;
-
-    this.setState({
-      nomeInvalido: false,
-      emailInvalido: false,
-      senhaInvalida: false,
-    });
-
-    if (!nome) {
-      this.setState({
-        nomeInvalido: true,
-      });
-
-      return false;
-    }
-
-    const emailRegex = /\S+@\S+/;
-
-    if (!email) {
-      this.setState({
-        emailInvalido: true,
-      });
-
-      return false;
-    }
-
-    if (!emailRegex.test(email)) {
-      this.setState({
-        emailInvalido: true,
-      });
-
-      return false;
-    }
-
-    if (!senha) {
-      this.setState({
-        senhaInvalida: true,
-      });
-
-      return false;
-    }
-
-    return true;
-  }
-
-  renderNomeInvalido(): JSX.Element {
-    const { nomeInvalido } = this.state;
-
-    if (nomeInvalido) {
-      return (
-        <IonItem>
-          <IonText color="danger" data-testid="nome-invalido-text">
-            <p>Nome inválido.</p>
-          </IonText>
-        </IonItem>
-      );
-    }
-
-    return <span />;
-  }
-
-  renderEmailInvalido(): JSX.Element {
-    const { emailInvalido, emailJaUtilizado } = this.state;
-
-    if (emailJaUtilizado) {
-      return (
-        <IonItem>
-          <IonText color="danger" data-testid="email-ja-utilizado-text">
-            <small>O e-mail já foi utilizado.</small>
-          </IonText>
-        </IonItem>
-      );
-    }
-
-    if (emailInvalido) {
-      return (
-        <IonItem>
-          <IonText color="danger" data-testid="email-invalido-text">
-            <small>E-mail inválido.</small>
-          </IonText>
-        </IonItem>
-      );
-    }
-
-    return <span />;
-  }
-
-  renderSenhaInvalido(): JSX.Element {
-    const { senhaInvalida } = this.state;
-
-    if (senhaInvalida) {
-      return (
-        <IonItem>
-          <IonText color="danger" data-testid="senha-invalido-text">
-            <p>Senha inválida.</p>
-          </IonText>
-        </IonItem>
-      );
-    }
-
-    return <span />;
-  }
-
-  render(): JSX.Element {
-    const { emailInvalido, senhaInvalida, nomeInvalido } = this.state;
-
-    return (
-      <IonPage data-testid="cadastrar-page">
-        <Header titulo="Cadastrar" disableBackButton />
-        <IonContent>
-          <IonGrid>
-            <IonRow class="ion-margin-top">
-              <IonCol size-lg="4" offset-lg="4" size-md="8" offset-md="2">
-                <IonItem>
-                  <IonLabel position="floating">Nome</IonLabel>
-                  <IonInput
-                    type="text"
-                    title="Nome"
-                    color={nomeInvalido ? 'danger' : ''}
-                    data-testid="nome-input"
-                    onIonChange={(e) =>
-                      this.setState({
-                        nome: String(e.detail.value),
-                      })
-                    }
-                  />
-                </IonItem>
-                {this.renderNomeInvalido()}
-                <IonItem>
-                  <IonLabel position="floating">E-mail</IonLabel>
-                  <IonInput
-                    type="email"
-                    title="E-mail"
-                    color={emailInvalido ? 'danger' : ''}
-                    data-testid="email-input"
-                    autofocus
-                    onIonChange={(e) =>
-                      this.setState({
-                        email: String(e.detail.value),
-                      })
-                    }
-                  />
-                </IonItem>
-                {this.renderEmailInvalido()}
-                <IonItem class="ion-margin-bottom">
-                  <IonLabel position="floating">Senha</IonLabel>
-                  <IonInput
-                    type="password"
-                    title="Senha"
-                    color={senhaInvalida ? 'danger' : ''}
-                    data-testid="senha-input"
-                    onIonChange={(e) =>
-                      this.setState({
-                        senha: String(e.detail.value),
-                      })
-                    }
-                  />
-                </IonItem>
-                {this.renderSenhaInvalido()}
-                <IonButton
-                  title="Cadastrar"
-                  expand="block"
-                  data-testid="cadastrar-button"
-                  onClick={() => this.cadastrar()}
-                >
-                  Cadastrar
-                </IonButton>
-                <IonRouterLink routerLink="/">
-                  <IonButton
-                    title="Cadastrar"
-                    expand="block"
-                    fill="clear"
-                    data-testid="possui-conta-button"
-                  >
-                    Já possui conta? Entrar!
-                  </IonButton>
-                </IonRouterLink>
-              </IonCol>
-            </IonRow>
-          </IonGrid>
-        </IonContent>
-      </IonPage>
-    );
-  }
+  return (
+    <IonPage data-testid="cadastrar-page">
+      <Header titulo="Cadastrar" disableBackButton />
+      <IonContent>
+        <IonGrid>
+          <Formik
+            initialValues={{
+              organizacaoTipoId: null,
+              nome: '',
+              email: '',
+              senha: '',
+              confirmarSenha: '',
+              nomeFantasia: '',
+              documento: '',
+            }}
+            onSubmit={handleSubmit}
+            validate={handleValidate}
+          >
+            {({ values, errors, handleChange, isSubmitting }) => (
+              <Form>
+                <IonRow class="ion-margin-top">
+                  <IonCol size-lg="4" offset-lg="4" size-md="8" offset-md="2">
+                    <IonList>
+                      <IonRadioGroup
+                        name="organizacaoTipoId"
+                        onIonChange={handleChange}
+                      >
+                        <IonListHeader>
+                          <IonLabel>Tipo de pessoa</IonLabel>
+                        </IonListHeader>
+                        <IonItem>
+                          <IonLabel>Pessoa Física</IonLabel>
+                          <IonRadio slot="start" value={1} />
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel>Pessoa Júridica</IonLabel>
+                          <IonRadio slot="start" value={2} />
+                        </IonItem>
+                      </IonRadioGroup>
+                    </IonList>
+                    {errors.organizacaoTipoId ? (
+                      <ErrorField
+                        mensagem={errors.organizacaoTipoId}
+                        testid="organizacao-tipo-id-invaildo-text"
+                      />
+                    ) : null}
+                  </IonCol>
+                </IonRow>
+                {values.organizacaoTipoId && (
+                  <>
+                    <IonRow>
+                      <IonCol
+                        size-lg="4"
+                        offset-lg="4"
+                        size-md="8"
+                        offset-md="2"
+                      >
+                        {values.organizacaoTipoId === 1 ? (
+                          <CadastrarPessoaFisicaForm />
+                        ) : (
+                          <CadastrarPessoaJuridicaForm />
+                        )}
+                      </IonCol>
+                    </IonRow>
+                    <IonRow class="ion-margin-top">
+                      <IonCol
+                        size-lg="4"
+                        offset-lg="4"
+                        size-md="8"
+                        offset-md="2"
+                      >
+                        <IonList>
+                          <IonRadioGroup
+                            name="consultor"
+                            onIonChange={handleChange}
+                          >
+                            <IonListHeader>
+                              <IonLabel>
+                                Deseja se cadastrar como consultor financeiro?
+                              </IonLabel>
+                            </IonListHeader>
+                            <IonItem>
+                              <IonLabel>Sim</IonLabel>
+                              <IonRadio slot="start" value={1} />
+                            </IonItem>
+                            <IonItem>
+                              <IonLabel>Não</IonLabel>
+                              <IonRadio slot="start" value={0} />
+                            </IonItem>
+                          </IonRadioGroup>
+                        </IonList>
+                        {errors.consultor ? (
+                          <ErrorField
+                            mensagem={errors.consultor}
+                            testid="consultor-invalido-text"
+                          />
+                        ) : null}
+                        {values.consultor === 1 && <CadastrarConsultorForm />}
+                      </IonCol>
+                    </IonRow>
+                  </>
+                )}
+                <IonRow>
+                  <IonCol size-lg="4" offset-lg="4" size-md="8" offset-md="2">
+                    <IonButton
+                      title="Cadastrar"
+                      expand="block"
+                      data-testid="cadastrar-button"
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="ion-margin-top"
+                      // onClick={() => this.cadastrar()}
+                    >
+                      {isSubmitting ? <IonSpinner /> : 'Cadastrar'}
+                    </IonButton>
+                    <IonRouterLink routerLink="/">
+                      <IonButton
+                        title="Cadastrar"
+                        expand="block"
+                        fill="clear"
+                        data-testid="possui-conta-button"
+                      >
+                        Já possui conta? Entrar!
+                      </IonButton>
+                    </IonRouterLink>
+                  </IonCol>
+                </IonRow>
+              </Form>
+            )}
+          </Formik>
+        </IonGrid>
+      </IonContent>
+    </IonPage>
+  );
 }
