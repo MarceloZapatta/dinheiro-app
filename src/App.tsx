@@ -41,6 +41,7 @@ import '@ionic/react/css/display.css';
 import './theme/variables.css';
 import Cadastrar from './pages/auth/Cadastrar';
 import VerificacaoEmailEnviado from './pages/auth/VerificacaoEmailEnviado';
+import SelecionarOrganizacao from './pages/selecionar-organizacao/SelecionarOrganizacao';
 
 interface AppState {
   usuario: Record<string, unknown>;
@@ -134,6 +135,11 @@ export default class App extends React.Component<
             <Route
               path="/verificacao-email"
               component={VerificacaoEmailEnviado}
+            />
+            <Route
+              exact
+              path="/selecionar-organizacao"
+              component={SelecionarOrganizacao}
             />
             <Route exact path="/movimentacoes" component={Movimentacoes} />
             <Route exact path="/cadastrar" component={Cadastrar} />

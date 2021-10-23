@@ -105,6 +105,7 @@ export default class Login extends React.Component<LoginProps, LoginState> {
         return false;
       }
 
+      localStorage.setItem('auth.token', String(response.data.access_token));
       history.push('/movimentacoes');
 
       return true;

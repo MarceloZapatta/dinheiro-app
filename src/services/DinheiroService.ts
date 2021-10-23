@@ -10,12 +10,31 @@ interface DinheiroResponse {
   erros?: Record<string, unknown>[];
 }
 
+export interface Organizacao {
+  nome: string;
+  hash: string;
+  tipo: {
+    id: number;
+    tipo: string;
+  };
+}
+
+export interface OrganizacaoResponse extends Omit<DinheiroResponse, 'data'> {
+  data: Organizacao[];
+}
+
 export default class DinheiroService {
   constructor() {
     axios.interceptors.request.use((config: AxiosRequestConfig) => {
       if (config.headers) {
         config.headers.Accept = 'application/json';
+        const token = localStorage.getItem('auth.token');
+
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
       }
+
       return config;
     });
   }
@@ -73,11 +92,21 @@ export default class DinheiroService {
     for (let index = 0; index < keyErros.length; index += 1) {
       const key = keyErros[index];
       const erro = erros[key][0];
-      console.log(key, 'eu sou a key');
-      console.log(erro, 'eu sou o erro');
       formikErros[key] = erro;
     }
 
     return formikErros;
+  }
+
+  async getOrganizacoes(): Promise<OrganizacaoResponse> {
+    return axios
+      .get<OrganizacaoResponse>(`${this.baseUrl}v1/organizacoes`)
+      .then((response) => response.data)
+      .catch((error: AxiosError) => ({
+        sucesso: false,
+        mensagem: error.message,
+        status_codigo: Number(error.code),
+        data: [],
+      }));
   }
 }
