@@ -1,25 +1,8 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
-import {
-  IonApp,
-  IonIcon,
-  IonRouterOutlet,
-  IonTabBar,
-  IonTabButton,
-  IonTabs,
-  IonMenu,
-  IonContent,
-  IonList,
-  IonItem,
-} from '@ionic/react';
+import { IonApp } from '@ionic/react';
 
 import { menuController } from '@ionic/core';
-import { IonReactRouter } from '@ionic/react-router';
-import { cashOutline, menu } from 'ionicons/icons';
-import Login from './pages/auth/Login';
 import AlertErro from './components/AlertErro';
-import Movimentacoes from './pages/movimentacoes/Movimentacoes';
-import MovimentacoesAdicionar from './pages/movimentacoes/MovimentacoesAdicionar';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -39,13 +22,26 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
-import Cadastrar from './pages/auth/Cadastrar';
-import VerificacaoEmailEnviado from './pages/auth/VerificacaoEmailEnviado';
-import SelecionarOrganizacao from './pages/selecionar-organizacao/SelecionarOrganizacao';
+import Routes from './Routes';
 
 interface AppState {
-  usuario: Record<string, unknown>;
+  logado: boolean;
+  organizacaoSelecionada: boolean;
 }
+
+interface AuthContextInterface {
+  logado: boolean;
+  organizacaoSelecionada: boolean;
+  toggleLogado: () => void;
+  toggleEmpresaSelecionada: () => void;
+}
+
+export const AuthContext = React.createContext<AuthContextInterface>({
+  logado: !!localStorage.getItem('auth.token'),
+  organizacaoSelecionada: !!localStorage.getItem('auth.organizacao.hash'),
+  toggleLogado: () => null,
+  toggleEmpresaSelecionada: () => null,
+});
 
 export default class App extends React.Component<
   Record<string, unknown>,
@@ -55,7 +51,8 @@ export default class App extends React.Component<
     super(props);
 
     this.state = {
-      usuario: {},
+      logado: !!localStorage.getItem('auth.token'),
+      organizacaoSelecionada: !!localStorage.getItem('auth.organizacao.hash'),
     };
   }
 
@@ -63,94 +60,36 @@ export default class App extends React.Component<
     return menuController.open();
   };
 
-  renderRoutes(): JSX.Element {
-    const { usuario } = this.state;
+  toggleLogado = (): void => {
+    const { logado } = this.state;
+    this.setState({
+      logado: !logado,
+    });
+  };
 
-    if (Object.keys(usuario).length > 0) {
-      return (
-        <IonTabs>
-          <IonRouterOutlet>
-            <Route path="/movimentacoes" component={Movimentacoes} exact />
-            <Route
-              path="/movimentacoes/adicionar"
-              component={MovimentacoesAdicionar}
-              exact
-            />
-            <Route path="/" component={Login} exact />
-          </IonRouterOutlet>
-          <IonTabBar slot="bottom">
-            <IonTabButton tab="movimentacoes" href="/movimentacoes">
-              <IonIcon icon={cashOutline} />
-            </IonTabButton>
-            <IonTabButton onClick={() => this.openMenu()}>
-              <IonIcon icon={menu} onClick={() => this.openMenu()} />
-            </IonTabButton>
-          </IonTabBar>
-        </IonTabs>
-      );
-    }
-
-    return (
-      <IonRouterOutlet>
-        <Route path="/cadastrar" component={Cadastrar} exact />
-        <Route path="/movimentacoes" component={Movimentacoes} exact />
-        <Route
-          path="/movimentacoes/adicionar"
-          component={MovimentacoesAdicionar}
-          exact
-        />
-        <Route path="/" component={Login} exact />
-      </IonRouterOutlet>
-    );
-  }
-
-  renderMenu(): JSX.Element {
-    const { usuario } = this.state;
-
-    if (Object.keys(usuario).length > 0) {
-      return (
-        <IonMenu side="start" menuId="first" contentId="menu-content">
-          <IonContent id="menu-content">
-            <IonList>
-              <IonItem>Perfil</IonItem>
-              <IonItem>Extrato</IonItem>
-              <IonItem>Contas</IonItem>
-              <IonItem>Menu Item</IonItem>
-              <IonItem>Menu Item</IonItem>
-            </IonList>
-          </IonContent>
-        </IonMenu>
-      );
-    }
-
-    return <span />;
-  }
+  toggleEmpresaSelecionada = (): void => {
+    const { organizacaoSelecionada } = this.state;
+    this.setState({
+      organizacaoSelecionada: !organizacaoSelecionada,
+    });
+  };
 
   render(): JSX.Element {
+    const { logado, organizacaoSelecionada } = this.state;
+
     return (
       <IonApp>
-        <IonReactRouter>
-          <IonRouterOutlet>
-            <Route exact path="/" component={Login} />
-            <Route
-              path="/verificacao-email"
-              component={VerificacaoEmailEnviado}
-            />
-            <Route
-              exact
-              path="/selecionar-organizacao"
-              component={SelecionarOrganizacao}
-            />
-            <Route exact path="/movimentacoes" component={Movimentacoes} />
-            <Route exact path="/cadastrar" component={Cadastrar} />
-            <Route
-              path="/movimentacoes/adicionar"
-              component={MovimentacoesAdicionar}
-              exact
-            />
-          </IonRouterOutlet>
-        </IonReactRouter>
-        <AlertErro />
+        <AuthContext.Provider
+          value={{
+            logado,
+            organizacaoSelecionada,
+            toggleLogado: this.toggleLogado,
+            toggleEmpresaSelecionada: this.toggleEmpresaSelecionada,
+          }}
+        >
+          <Routes />
+          <AlertErro />
+        </AuthContext.Provider>
       </IonApp>
     );
   }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   IonContent,
   IonPage,
@@ -14,40 +14,27 @@ import {
 
 import './Login.css';
 
-import { RouteComponentProps } from 'react-router';
+import { useHistory } from 'react-router';
 import Header from '../../components/Header';
 
 import Dinheiro from '../../services/DinheiroService';
 import store from '../../store';
 import { setShow } from '../../store/reducers/alertErroReducer';
+import { AuthContext } from '../../App';
 
-interface LoginState {
-  email: string;
-  password: string;
-  emailInvalido: boolean;
-  passwordInvalido: boolean;
-}
+export default function Login(): JSX.Element {
+  const [email, setEmail] = useState<string>();
+  const [emailInvalido, setEmailInvalido] = useState(false);
+  const [password, setPassword] = useState<string>();
+  const [passwordInvalido, setPasswordInvalido] = useState(false);
+  const history = useHistory();
+  const authContext = useContext(AuthContext);
 
-interface LoginProps {
-  history: RouteComponentProps['history'];
-}
+  useEffect(() => {
+    mostrarMensagens();
+  }, []);
 
-export default class Login extends React.Component<LoginProps, LoginState> {
-  constructor(props: LoginProps) {
-    super(props);
-
-    this.state = {
-      email: '',
-      emailInvalido: false,
-      password: '',
-      passwordInvalido: false,
-    };
-
-    this.mostrarMensagens();
-  }
-
-  mostrarMensagens(): void {
-    const { history } = this.props;
+  function mostrarMensagens(): void {
     const urlSearchParams = new URLSearchParams(history.location.search);
     const sucesso = urlSearchParams.get('sucesso');
     const erro = urlSearchParams.get('erro');
@@ -72,8 +59,8 @@ export default class Login extends React.Component<LoginProps, LoginState> {
     }
   }
 
-  login(): boolean {
-    if (!this.validarCampos()) {
+  function login(): boolean {
+    if (!validarCampos()) {
       store.dispatch(
         setShow({
           show: true,
@@ -83,13 +70,9 @@ export default class Login extends React.Component<LoginProps, LoginState> {
       return false;
     }
 
-    const { email, password } = this.state;
-
     const dinheiro = new Dinheiro();
 
-    dinheiro.login(email, password).then((response) => {
-      const { history } = this.props;
-
+    dinheiro.login(String(email), String(password)).then((response) => {
       if (response.sucesso !== true) {
         if (response.mensagem === 'Network request failed') {
           response.mensagem = 'Erro de conexão. Tente novamente mais tarde.';
@@ -106,6 +89,7 @@ export default class Login extends React.Component<LoginProps, LoginState> {
       }
 
       localStorage.setItem('auth.token', String(response.data.access_token));
+      authContext.toggleLogado();
       history.push('/movimentacoes');
 
       return true;
@@ -114,57 +98,32 @@ export default class Login extends React.Component<LoginProps, LoginState> {
     return true;
   }
 
-  validarCampos(): boolean {
-    const { email, password } = this.state;
-
-    this.setState({
-      emailInvalido: false,
-      passwordInvalido: false,
-    });
+  function validarCampos(): boolean {
+    setEmailInvalido(false);
+    setPasswordInvalido(false);
 
     const emailRegex = /\S+@\S+/;
 
     if (!email) {
-      this.setState({
-        emailInvalido: true,
-      });
-
+      setEmailInvalido(true);
       return false;
     }
 
     if (!emailRegex.test(email)) {
-      this.setState({
-        emailInvalido: true,
-      });
-
+      setEmailInvalido(false);
       return false;
     }
 
     if (!password) {
-      this.setState({
-        passwordInvalido: true,
-      });
-
+      setPasswordInvalido(false);
       return false;
     }
 
     return true;
   }
 
-  isPasswordInvalido(): boolean {
-    const { passwordInvalido } = this.state;
-
-    return passwordInvalido;
-  }
-
-  isEmailInvalido(): boolean {
-    const { emailInvalido } = this.state;
-
-    return emailInvalido;
-  }
-
-  renderEmailInvalido(): JSX.Element {
-    if (this.isEmailInvalido()) {
+  function renderEmailInvalido(): JSX.Element {
+    if (emailInvalido) {
       return (
         <IonItem>
           <IonText color="danger" data-testid="email-invalido-text">
@@ -177,8 +136,8 @@ export default class Login extends React.Component<LoginProps, LoginState> {
     return <span />;
   }
 
-  renderPasswordInvalido(): JSX.Element {
-    if (this.isPasswordInvalido()) {
+  function renderPasswordInvalido(): JSX.Element {
+    if (passwordInvalido) {
       return (
         <IonItem>
           <IonText color="danger" data-testid="password-invalido-text">
@@ -191,66 +150,56 @@ export default class Login extends React.Component<LoginProps, LoginState> {
     return <span />;
   }
 
-  render(): JSX.Element {
-    return (
-      <IonPage data-testid="login-page">
-        <Header titulo="Entrar" disableBackButton />
-        <IonContent>
-          <IonGrid>
-            <IonRow class="ion-margin-top">
-              <IonCol size-lg="4" offset-lg="4" size-md="8" offset-md="2">
-                <IonItem>
-                  <IonLabel position="floating">E-mail</IonLabel>
-                  <IonInput
-                    type="email"
-                    title="E-mail"
-                    color={this.isEmailInvalido() ? 'danger' : ''}
-                    data-testid="email-input"
-                    onIonChange={(e) =>
-                      this.setState({
-                        email: String(e.detail.value),
-                      })
-                    }
-                  />
-                </IonItem>
-                {this.renderEmailInvalido()}
-                <IonItem class="ion-margin-bottom">
-                  <IonLabel position="floating">Senha</IonLabel>
-                  <IonInput
-                    type="password"
-                    title="Senha"
-                    color={this.isPasswordInvalido() ? 'danger' : ''}
-                    data-testid="senha-input"
-                    onIonChange={(e) =>
-                      this.setState({
-                        password: String(e.detail.value),
-                      })
-                    }
-                  />
-                </IonItem>
-                {this.renderPasswordInvalido()}
-                <IonButton
-                  title="Entrar"
-                  expand="block"
-                  data-testid="entrar-button"
-                  onClick={() => this.login()}
-                >
-                  Entrar
-                </IonButton>
-                <IonButton
-                  title="Registrar"
-                  expand="block"
-                  fill="clear"
-                  data-testid="registrar-button"
-                  routerLink="/cadastrar"
-                >
-                  Novo por aqui? Registre-se!
-                </IonButton>
-              </IonCol>
-            </IonRow>
-          </IonGrid>
-        </IonContent>
-      </IonPage>
-    );
-  }
+  return (
+    <IonPage data-testid="login-page">
+      <Header titulo="Entrar" disableBackButton />
+      <IonContent>
+        <IonGrid>
+          <IonRow class="ion-margin-top">
+            <IonCol size-lg="4" offset-lg="4" size-md="8" offset-md="2">
+              <IonItem>
+                <IonLabel position="floating">E-mail</IonLabel>
+                <IonInput
+                  type="email"
+                  title="E-mail"
+                  color={emailInvalido ? 'danger' : ''}
+                  data-testid="email-input"
+                  onIonChange={(e) => setEmail(String(e.detail.value))}
+                />
+              </IonItem>
+              {renderEmailInvalido()}
+              <IonItem class="ion-margin-bottom">
+                <IonLabel position="floating">Senha</IonLabel>
+                <IonInput
+                  type="password"
+                  title="Senha"
+                  color={emailInvalido ? 'danger' : ''}
+                  data-testid="senha-input"
+                  onIonChange={(e) => setPassword(String(e.detail.value))}
+                />
+              </IonItem>
+              {renderPasswordInvalido()}
+              <IonButton
+                title="Entrar"
+                expand="block"
+                data-testid="entrar-button"
+                onClick={() => login()}
+              >
+                Entrar
+              </IonButton>
+              <IonButton
+                title="Registrar"
+                expand="block"
+                fill="clear"
+                data-testid="registrar-button"
+                routerLink="/cadastrar"
+              >
+                Novo por aqui? Registre-se!
+              </IonButton>
+            </IonCol>
+          </IonRow>
+        </IonGrid>
+      </IonContent>
+    </IonPage>
+  );
 }

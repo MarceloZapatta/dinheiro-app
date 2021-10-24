@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useHistory } from 'react-router';
 import {
   IonContent,
@@ -16,6 +16,7 @@ import {
 import './SelecionarOrganizacao.scss';
 
 import Header from '../../components/Header';
+import { AuthContext } from '../../App';
 
 import Dinheiro, {
   Organizacao,
@@ -25,6 +26,7 @@ import Dinheiro, {
 export default function SelecionarOrganizacao(): JSX.Element {
   const [organizacoes, setOrganizacoes] = useState<Organizacao[]>();
   const history = useHistory();
+  const authContext = useContext(AuthContext);
 
   useEffect(() => {
     fetchOrganizacoes();
@@ -38,6 +40,7 @@ export default function SelecionarOrganizacao(): JSX.Element {
 
   function selecionarOrganizacao(hash: string) {
     localStorage.setItem('auth.organizacao.hash', hash);
+    authContext.toggleEmpresaSelecionada();
     history.push(`/movimentacoes`);
   }
 
