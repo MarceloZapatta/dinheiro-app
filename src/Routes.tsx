@@ -50,15 +50,22 @@ export default function Routes(): JSX.Element {
       <IonRouterOutlet>
         {authContext.logado ? (
           <>
-            <Route
-              exact
-              path="/selecionar-organizacao"
-              component={SelecionarOrganizacao}
-            />
             {authContext.logado && !authContext.organizacaoSelecionada ? (
-              <Redirect to="/selecionar-organizacao" />
+              <>
+                <Route
+                  exact
+                  path="/selecionar-organizacao"
+                  component={SelecionarOrganizacao}
+                />
+                <Redirect to="selecionar-organizacao" />
+              </>
             ) : (
               <>
+                <Route
+                  exact
+                  path="/selecionar-organizacao"
+                  component={SelecionarOrganizacao}
+                />
                 <Route
                   path="/verificacao-email"
                   component={VerificacaoEmailEnviado}
@@ -70,7 +77,6 @@ export default function Routes(): JSX.Element {
                   component={MovimentacoesAdicionar}
                   exact
                 />
-                <Redirect to="/movimentacoes" />
               </>
             )}
             {/* <IonTabs>

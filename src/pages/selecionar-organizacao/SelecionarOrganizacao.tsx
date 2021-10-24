@@ -40,7 +40,9 @@ export default function SelecionarOrganizacao(): JSX.Element {
 
   function selecionarOrganizacao(hash: string) {
     localStorage.setItem('auth.organizacao.hash', hash);
-    authContext.toggleEmpresaSelecionada();
+    if (!authContext.organizacaoSelecionada) {
+      authContext.toggleOrganizacaoSelecionada();
+    }
     history.push(`/movimentacoes`);
   }
 

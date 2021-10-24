@@ -33,14 +33,14 @@ interface AuthContextInterface {
   logado: boolean;
   organizacaoSelecionada: boolean;
   toggleLogado: () => void;
-  toggleEmpresaSelecionada: () => void;
+  toggleOrganizacaoSelecionada: () => void;
 }
 
 export const AuthContext = React.createContext<AuthContextInterface>({
   logado: !!localStorage.getItem('auth.token'),
   organizacaoSelecionada: !!localStorage.getItem('auth.organizacao.hash'),
   toggleLogado: () => null,
-  toggleEmpresaSelecionada: () => null,
+  toggleOrganizacaoSelecionada: () => null,
 });
 
 export default class App extends React.Component<
@@ -67,7 +67,7 @@ export default class App extends React.Component<
     });
   };
 
-  toggleEmpresaSelecionada = (): void => {
+  toggleOrganizacaoSelecionada = (): void => {
     const { organizacaoSelecionada } = this.state;
     this.setState({
       organizacaoSelecionada: !organizacaoSelecionada,
@@ -84,7 +84,7 @@ export default class App extends React.Component<
             logado,
             organizacaoSelecionada,
             toggleLogado: this.toggleLogado,
-            toggleEmpresaSelecionada: this.toggleEmpresaSelecionada,
+            toggleOrganizacaoSelecionada: this.toggleOrganizacaoSelecionada,
           }}
         >
           <Routes />
