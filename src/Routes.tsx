@@ -10,6 +10,7 @@ import { IonReactRouter } from '@ionic/react-router';
 import React, { useContext } from 'react';
 import { Redirect, Route } from 'react-router';
 import { AuthContext } from './App';
+import PrivateRoute from './components/routes/PrivateRoute';
 import Cadastrar from './pages/auth/Cadastrar';
 import Login from './pages/auth/Login';
 import VerificacaoEmailEnviado from './pages/auth/VerificacaoEmailEnviado';
@@ -47,44 +48,25 @@ export default function Routes(): JSX.Element {
   return (
     <IonReactRouter>
       <IonRouterOutlet>
-        {authContext.logado ? (
-          <>
-            {authContext.logado && !authContext.organizacaoSelecionada ? (
-              <>
-                <Route
-                  exact
-                  path="/selecionar-organizacao"
-                  component={SelecionarOrganizacao}
-                />
-                <Redirect to="selecionar-organizacao" />
-              </>
-            ) : (
-              <>
-                <Route exact path="/contas" component={Contas} />
-                <Route
-                  exact
-                  path="/contas/adicionar"
-                  component={ContasAdicionar}
-                />
-                <Route
-                  exact
-                  path="/contas/editar/:id"
-                  component={ContasEditar}
-                />
-                <Route
-                  exact
-                  path="/selecionar-organizacao"
-                  component={SelecionarOrganizacao}
-                />
-                <Route exact path="/movimentacoes" component={Movimentacoes} />
-                <Route
-                  path="/movimentacoes/adicionar"
-                  component={MovimentacoesAdicionar}
-                  exact
-                />
-              </>
-            )}
-            {/* <IonTabs>
+        <PrivateRoute exact path="/contas">
+          <Contas />
+        </PrivateRoute>
+        <PrivateRoute exact path="/contas/adicionar">
+          <ContasAdicionar />
+        </PrivateRoute>
+        <PrivateRoute exact path="/contas/editar/:id">
+          <ContasEditar />
+        </PrivateRoute>
+        <PrivateRoute exact path="/movimentacoes">
+          <Movimentacoes />
+        </PrivateRoute>
+        <PrivateRoute path="/movimentacoes/adicionar" exact>
+          <MovimentacoesAdicionar />
+        </PrivateRoute>
+        <PrivateRoute exact path="/selecionar-organizacao">
+          <SelecionarOrganizacao />
+        </PrivateRoute>
+        {/* <IonTabs>
               <IonTabBar slot="bottom">
                 <IonTabButton tab="movimentacoes" href="/movimentacoes">
                   <IonIcon icon={cashOutline} />
@@ -94,17 +76,15 @@ export default function Routes(): JSX.Element {
                 </IonTabButton>
               </IonTabBar>
             </IonTabs> */}
-          </>
-        ) : (
-          <>
-            <Route exact path="/" component={Login} />
-            <Route exact path="/cadastrar" component={Cadastrar} />
-            <Route
-              path="/verificacao-email"
-              component={VerificacaoEmailEnviado}
-            />
-          </>
-        )}
+        <Route
+          exact
+          path="/"
+          render={() =>
+            authContext.logado ? <Redirect to="/movimentacoes" /> : <Login />
+          }
+        />
+        <Route exact path="/cadastrar" component={Cadastrar} />
+        <Route path="/verificacao-email" component={VerificacaoEmailEnviado} />
       </IonRouterOutlet>
     </IonReactRouter>
   );
