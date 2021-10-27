@@ -1,0 +1,60 @@
+@import '../../assets/scss/a11y-ally.scss';
+
+$magicMint: (
+  string: 'bcf6cdff',
+  color: #bcf6cdff
+);
+$carolinaBlue: (
+  string: '2e9bd6ff',
+  color: #2e9bd6ff
+);
+$sheenGreen: (
+  string: 'a9e029ff',
+  color: #a9e029ff
+);
+$emerald: (
+  string: '21d989ff',
+  color: #21d989ff
+);
+$mediumChampagne: (
+  string: 'fcf6b1ff',
+  color: #fcf6b1ff
+);
+$honeyYellow: (
+  string: 'f7b32bff',
+  color: #f7b32bff
+);
+$darkOrange: (
+  string: 'ff8800ff',
+  color: #ff8800ff
+);
+$redRyb: (
+  string: 'f72c25ff',
+  color: #f72c25ff
+);
+$pinkLavander: (
+  string: 'eac4e7ff',
+  color: #eac4e7ff
+);
+$steelPink: (
+  string: 'b91bc8ff',
+  color: #b91bc8ff
+);
+
+$colors: $magicMint, $carolinaBlue, $sheenGreen, $emerald, $mediumChampagne,
+  $honeyYellow, $darkOrange, $redRyb, $pinkLavander, $steelPink;
+
+.cor-icone {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+}
+
+@each $color in $colors {
+  .cor-icone.cor-icone--#{map-get($color, 'string')} {
+    color: a11y-color(#fff, map-get($color, 'color'));
+  }
+}

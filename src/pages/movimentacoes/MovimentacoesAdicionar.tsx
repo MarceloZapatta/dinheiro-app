@@ -37,14 +37,6 @@ export default class MovimentacoesAdicionar extends React.Component<
     };
   }
 
-  formatMoney = (valorNumerico: number): string => {
-    return Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-      maximumFractionDigits: 2,
-    }).format(valorNumerico);
-  };
-
   handleCurrencyInput(e: KeyboardEvent): void {
     e.preventDefault();
 
@@ -80,6 +72,14 @@ export default class MovimentacoesAdicionar extends React.Component<
       valorFormatado: valorFormatadoNovo,
     });
   }
+
+  formatMoney = (valorNumerico: number): string => {
+    return Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      maximumFractionDigits: 2,
+    }).format(valorNumerico);
+  };
 
   render(): JSX.Element {
     const { valorFormatado } = this.state;

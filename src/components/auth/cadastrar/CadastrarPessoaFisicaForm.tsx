@@ -11,9 +11,8 @@ interface CadastrarPessoaFisicaFormValues {
 }
 
 export default function CadastrarPessoaFisicaForm(): JSX.Element {
-  const { errors, handleChange } = useFormikContext<
-    CadastrarPessoaFisicaFormValues
-  >();
+  const { errors, handleChange } =
+    useFormikContext<CadastrarPessoaFisicaFormValues>();
 
   return (
     <>

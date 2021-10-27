@@ -3,7 +3,6 @@ import {
   IonCol,
   IonContent,
   IonGrid,
-  // IonInput,
   IonItem,
   IonLabel,
   IonList,
@@ -14,7 +13,6 @@ import {
   IonRouterLink,
   IonRow,
   IonSpinner,
-  // IonText,
 } from '@ionic/react';
 import { Form, Formik } from 'formik';
 
@@ -24,23 +22,8 @@ import CadastrarConsultorForm from '../../components/auth/cadastrar/CadastrarCon
 import CadastrarPessoaFisicaForm from '../../components/auth/cadastrar/CadastrarPessoaFisicaForm';
 import CadastrarPessoaJuridicaForm from '../../components/auth/cadastrar/CadastrarPessoaJuridicaForm';
 import ErrorField from '../../components/ErrorField';
-// import { RouteComponentProps } from 'react-router';
-// import ErrorField from '../../components/ErrorField';
 import Header from '../../components/Header';
 import DinheiroService from '../../services/DinheiroService';
-// import Dinheiro from '../../services/Dinheiro';
-// import store from '../../store';
-// import { setShow } from '../../store/reducers/alertErroReducer';
-
-// interface CadastrarState {
-//   email: string;
-//   senha: string;
-//   nome: string;
-//   emailInvalido: boolean;
-//   senhaInvalida: boolean;
-//   nomeInvalido: boolean;
-//   emailJaUtilizado: boolean;
-// }
 
 export interface CadastrarValues {
   organizacaoTipoId?: number | string | null;
@@ -54,10 +37,6 @@ export interface CadastrarValues {
   consultorResumo?: string;
 }
 
-// interface CadastrarProps {
-//   history: RouteComponentProps['history'];
-// }
-
 export default function Cadastrar(): JSX.Element {
   const history = useHistory();
 
@@ -69,14 +48,12 @@ export default function Cadastrar(): JSX.Element {
     return dinheiroService
       .cadastrar(values)
       .then((response) => {
-        console.log(response, 'estou aaqq');
         if (response.sucesso !== true) {
           if (response.mensagem === 'Network request failed') {
             response.mensagem = 'Erro de conexão. Tente novamente mais tarde.';
           }
 
           if (response.status_codigo === 422 && response.erros) {
-            console.log(response.status_codigo, response.erros);
             if (Object.keys(response.erros).length > 0) {
               setErrors(dinheiroService.transformDinheiroErros(response.erros));
             }
@@ -166,9 +143,10 @@ export default function Cadastrar(): JSX.Element {
               confirmarSenha: '',
               nomeFantasia: '',
               documento: '',
+              consultor: 0,
             }}
-            onSubmit={handleSubmit}
-            validate={handleValidate}
+            onSubmit={(values, functions) => handleSubmit(values, functions)}
+            validate={(values) => handleValidate(values)}
           >
             {({ values, errors, handleChange, isSubmitting }) => (
               <Form>
@@ -263,7 +241,6 @@ export default function Cadastrar(): JSX.Element {
                       type="submit"
                       disabled={isSubmitting}
                       className="ion-margin-top"
-                      // onClick={() => this.cadastrar()}
                     >
                       {isSubmitting ? <IonSpinner /> : 'Cadastrar'}
                     </IonButton>

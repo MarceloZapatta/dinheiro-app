@@ -8,15 +8,14 @@ import {
 import { IonReactRouter } from '@ionic/react-router';
 // import { cashOutline, menu } from 'ionicons/icons';
 import React, { useContext } from 'react';
-import {
-  Redirect,
-  // Redirect,
-  Route,
-} from 'react-router';
+import { Redirect, Route } from 'react-router';
 import { AuthContext } from './App';
 import Cadastrar from './pages/auth/Cadastrar';
 import Login from './pages/auth/Login';
 import VerificacaoEmailEnviado from './pages/auth/VerificacaoEmailEnviado';
+import Contas from './pages/contas/Contas';
+import ContasAdicionar from './pages/contas/ContasAdicionar';
+import ContasEditar from './pages/contas/ContasEditar';
 import Movimentacoes from './pages/movimentacoes/Movimentacoes';
 import MovimentacoesAdicionar from './pages/movimentacoes/MovimentacoesAdicionar';
 import SelecionarOrganizacao from './pages/selecionar-organizacao/SelecionarOrganizacao';
@@ -61,17 +60,23 @@ export default function Routes(): JSX.Element {
               </>
             ) : (
               <>
+                <Route exact path="/contas" component={Contas} />
+                <Route
+                  exact
+                  path="/contas/adicionar"
+                  component={ContasAdicionar}
+                />
+                <Route
+                  exact
+                  path="/contas/editar/:id"
+                  component={ContasEditar}
+                />
                 <Route
                   exact
                   path="/selecionar-organizacao"
                   component={SelecionarOrganizacao}
                 />
-                <Route
-                  path="/verificacao-email"
-                  component={VerificacaoEmailEnviado}
-                />
                 <Route exact path="/movimentacoes" component={Movimentacoes} />
-                <Route exact path="/cadastrar" component={Cadastrar} />
                 <Route
                   path="/movimentacoes/adicionar"
                   component={MovimentacoesAdicionar}
@@ -93,7 +98,11 @@ export default function Routes(): JSX.Element {
         ) : (
           <>
             <Route exact path="/" component={Login} />
-            <Redirect to="/" />
+            <Route exact path="/cadastrar" component={Cadastrar} />
+            <Route
+              path="/verificacao-email"
+              component={VerificacaoEmailEnviado}
+            />
           </>
         )}
       </IonRouterOutlet>

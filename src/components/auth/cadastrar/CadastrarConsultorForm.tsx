@@ -8,9 +8,8 @@ interface CadastrarConsultorFormValues {
 }
 
 export default function CadastrarConsultorForm(): JSX.Element {
-  const { errors, handleChange } = useFormikContext<
-    CadastrarConsultorFormValues
-  >();
+  const { errors, handleChange } =
+    useFormikContext<CadastrarConsultorFormValues>();
 
   return (
     <>

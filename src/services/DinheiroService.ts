@@ -23,6 +23,42 @@ export interface OrganizacaoResponse extends Omit<DinheiroResponse, 'data'> {
   data: Organizacao[];
 }
 
+export interface Conta {
+  id: number;
+  nome: string;
+  cor: Cor;
+  icone: string;
+  saldo: number;
+  // eslint-disable-next-line camelcase
+  saldo_inicial: number;
+}
+
+export interface ContaStore {
+  id?: number;
+  nome: string;
+  // eslint-disable-next-line camelcase
+  cor_id: number;
+  // eslint-disable-next-line camelcase
+  saldo_inicial: number;
+}
+
+export interface ContasResponse extends Omit<DinheiroResponse, 'data'> {
+  data: Conta[];
+}
+
+export interface ContaResponse extends Omit<DinheiroResponse, 'data'> {
+  data: Conta | null;
+}
+export interface Cor {
+  id: number;
+  nome: string;
+  hexadecimal: string;
+}
+
+export interface CoresResponse extends Omit<DinheiroResponse, 'data'> {
+  data: Cor[];
+}
+
 export default class DinheiroService {
   constructor() {
     axios.interceptors.request.use((config: AxiosRequestConfig) => {
@@ -33,10 +69,30 @@ export default class DinheiroService {
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
+
+        const organizacaoHash = localStorage.getItem('auth.organizacao.hash');
+
+        if (organizacaoHash) {
+          config.headers[`X-Organizacao-Hash`] = organizacaoHash;
+        }
       }
 
       return config;
     });
+
+    axios.interceptors.response.use(
+      (response) => {
+        return response;
+      },
+      (error) => {
+        if (error.response.status === 401) {
+          localStorage.clear();
+          window.location.href = '/';
+        }
+
+        return Promise.reject(error);
+      }
+    );
   }
 
   baseUrl = process.env.REACT_APP_URL_API;
@@ -79,9 +135,11 @@ export default class DinheiroService {
     formData.append('email', String(values.email));
     formData.append('senha', String(values.senha));
 
-    return axios
-      .post<DinheiroResponse>(`${this.baseUrl}v1/auth/cadastrar`, formData)
-      .then((response) => response.data);
+    const response = await axios.post<DinheiroResponse>(
+      `${this.baseUrl}v1/auth/cadastrar`,
+      formData
+    );
+    return response.data;
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -101,6 +159,84 @@ export default class DinheiroService {
   async getOrganizacoes(): Promise<OrganizacaoResponse> {
     return axios
       .get<OrganizacaoResponse>(`${this.baseUrl}v1/organizacoes`)
+      .then((response) => response.data)
+      .catch((error: AxiosError) => ({
+        sucesso: false,
+        mensagem: error.message,
+        status_codigo: Number(error.code),
+        data: [],
+      }));
+  }
+
+  async getContas(): Promise<ContasResponse> {
+    return axios
+      .get<ContasResponse>(`${this.baseUrl}v1/contas`)
+      .then((response) => response.data)
+      .catch((error: AxiosError) => ({
+        sucesso: false,
+        mensagem: error.message,
+        status_codigo: Number(error.code),
+        data: [],
+      }));
+  }
+
+  async getCores(): Promise<CoresResponse> {
+    return axios
+      .get<CoresResponse>(`${this.baseUrl}v1/cores`)
+      .then((response) => response.data)
+      .catch((error: AxiosError) => ({
+        sucesso: false,
+        mensagem: error.message,
+        status_codigo: Number(error.code),
+        data: [],
+      }));
+  }
+
+  storeConta(conta: ContaStore): Promise<ContaResponse> {
+    return axios
+      .post<ContaResponse>(`${this.baseUrl}v1/contas`, conta)
+      .then((response) => response.data)
+      .catch((error: AxiosError) => {
+        return {
+          sucesso: false,
+          mensagem: error.message,
+          status_codigo: Number(error.code),
+          data: null,
+        };
+      });
+  }
+
+  updateConta(conta: ContaStore): Promise<ContaResponse> {
+    return axios
+      .put<ContaResponse>(`${this.baseUrl}v1/contas/${conta.id}`, conta)
+      .then((response) => response.data)
+      .catch((error: AxiosError) => {
+        return {
+          sucesso: false,
+          mensagem: error.message,
+          status_codigo: Number(error.code),
+          data: null,
+        };
+      });
+  }
+
+  async getConta(id: number): Promise<ContaResponse> {
+    return axios
+      .get<ContaResponse>(`${this.baseUrl}v1/contas/${id}`)
+      .then((response) => response.data)
+      .catch((error: AxiosError) => {
+        return {
+          sucesso: false,
+          mensagem: error.message,
+          status_codigo: Number(error.code),
+          data: null,
+        };
+      });
+  }
+
+  async deleteConta(id: number): Promise<ContasResponse> {
+    return axios
+      .delete<ContasResponse>(`${this.baseUrl}v1/contas/${id}`)
       .then((response) => response.data)
       .catch((error: AxiosError) => ({
         sucesso: false,

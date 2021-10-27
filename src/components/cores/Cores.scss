@@ -1,0 +1,36 @@
+.holder-color {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  margin-right: 20px;
+  &.cor-magic_mint {
+    background-color: #bcf6cdff;
+  }
+  &.cor-carolina_blue {
+    background-color: #2e9bd6ff;
+  }
+  &.cor-sheen_green {
+    background-color: #a9e029ff;
+  }
+  &.cor-emerald {
+    background-color: #21d989ff;
+  }
+  &.cor-medium_champagne {
+    background-color: #fcf6b1ff;
+  }
+  &.cor-honey_yellow {
+    background-color: #f7b32bff;
+  }
+  &.cor-dark_orange {
+    background-color: #ff8800ff;
+  }
+  &.cor-red_ryb {
+    background-color: #f72c25ff;
+  }
+  &.cor-pink_lavander {
+    background-color: #eac4e7ff;
+  }
+  &.cor-steel_pink {
+    background-color: #b91bc8ff;
+  }
+}

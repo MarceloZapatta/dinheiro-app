@@ -26,12 +26,6 @@ export default class AlertErro extends React.Component<
     store.subscribe(this.handleAlertErroChange.bind(this));
   }
 
-  setShowErrorAlert(state: boolean): void {
-    this.setState({
-      show: false,
-    });
-  }
-
   handleAlertErroChange(): void {
     const { alertErro } = store.getState();
     const { show } = this.state;
@@ -43,6 +37,12 @@ export default class AlertErro extends React.Component<
         mensagem: alertErro.value.mensagem,
       });
     }
+  }
+
+  setShowErrorAlert(state: boolean): void {
+    this.setState({
+      show: false,
+    });
   }
 
   render(): JSX.Element {
