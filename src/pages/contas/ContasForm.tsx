@@ -23,13 +23,13 @@ export default function ContasForm(props: ContasFormProps): JSX.Element {
       <IonItem>
         <IonLabel position="floating">Nome</IonLabel>
         <IonInput name="nome" value={values.nome} onIonChange={handleChange} />
-        {errors.nome ? (
-          <ErrorField
-            mensagem={errors.nome}
-            testid="organizacao-tipo-id-invaildo-text"
-          />
-        ) : null}
       </IonItem>
+      {errors.nome ? (
+        <ErrorField
+          mensagem={errors.nome}
+          testid="organizacao-tipo-id-invaildo-text"
+        />
+      ) : null}
       <CoresInput
         initialValue={conta ? conta.cor : null}
         onChange={(corId: number) => setFieldValue('cor_id', corId)}
@@ -50,13 +50,13 @@ export default function ContasForm(props: ContasFormProps): JSX.Element {
           onChange={(e) => setFieldValue('saldo_inicial', e.detail.value)}
           disabled={!!conta}
         />
-        {errors.saldo_inicial ? (
-          <ErrorField
-            mensagem={errors.saldo_inicial}
-            testid="organizacao-tipo-id-invaildo-text"
-          />
-        ) : null}
       </IonItem>
+      {errors.saldo_inicial ? (
+        <ErrorField
+          mensagem={errors.saldo_inicial}
+          testid="organizacao-tipo-id-invaildo-text"
+        />
+      ) : null}
     </IonList>
   );
 }

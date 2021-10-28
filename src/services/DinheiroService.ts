@@ -85,7 +85,7 @@ export default class DinheiroService {
         return response;
       },
       (error) => {
-        if (error.response.status === 401) {
+        if (error.response.status === 401 && window.location.pathname !== '/') {
           localStorage.clear();
           window.location.href = '/';
         }
@@ -195,54 +195,24 @@ export default class DinheiroService {
   storeConta(conta: ContaStore): Promise<ContaResponse> {
     return axios
       .post<ContaResponse>(`${this.baseUrl}v1/contas`, conta)
-      .then((response) => response.data)
-      .catch((error: AxiosError) => {
-        return {
-          sucesso: false,
-          mensagem: error.message,
-          status_codigo: Number(error.code),
-          data: null,
-        };
-      });
+      .then((response) => response.data);
   }
 
   updateConta(conta: ContaStore): Promise<ContaResponse> {
     return axios
       .put<ContaResponse>(`${this.baseUrl}v1/contas/${conta.id}`, conta)
-      .then((response) => response.data)
-      .catch((error: AxiosError) => {
-        return {
-          sucesso: false,
-          mensagem: error.message,
-          status_codigo: Number(error.code),
-          data: null,
-        };
-      });
+      .then((response) => response.data);
   }
 
   async getConta(id: number): Promise<ContaResponse> {
     return axios
       .get<ContaResponse>(`${this.baseUrl}v1/contas/${id}`)
-      .then((response) => response.data)
-      .catch((error: AxiosError) => {
-        return {
-          sucesso: false,
-          mensagem: error.message,
-          status_codigo: Number(error.code),
-          data: null,
-        };
-      });
+      .then((response) => response.data);
   }
 
   async deleteConta(id: number): Promise<ContasResponse> {
     return axios
       .delete<ContasResponse>(`${this.baseUrl}v1/contas/${id}`)
-      .then((response) => response.data)
-      .catch((error: AxiosError) => ({
-        sucesso: false,
-        mensagem: error.message,
-        status_codigo: Number(error.code),
-        data: [],
-      }));
+      .then((response) => response.data);
   }
 }

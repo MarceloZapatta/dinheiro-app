@@ -88,6 +88,10 @@ export default function ContasAdicionar(): JSX.Element {
       errors.nome = 'O nome é obrigatório';
     }
 
+    if (!values.cor_id) {
+      errors.cor_id = 'A cor é obrigatória';
+    }
+
     if (!values.icone) {
       errors.icone = 'O ícone é obrigatório';
     }

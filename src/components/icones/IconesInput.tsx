@@ -45,8 +45,8 @@ export default function IconesInput(props: IconesInputProps): JSX.Element {
           {iconeSelecionado ? <IonIcon icon={icons[iconeSelecionado]} /> : null}
         </IonLabel>
       </IonItem>
-      {errors.cor_id ? (
-        <ErrorField mensagem={errors.cor_id} testid="cor-id-invaildo-text" />
+      {errors.icone ? (
+        <ErrorField mensagem={errors.icone} testid="icone-id-invaildo-text" />
       ) : null}
       <IconesModal
         show={showIconeModal}
