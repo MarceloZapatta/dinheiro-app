@@ -6,7 +6,7 @@ import {
   IonTabs,
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { cashOutline, wallet } from 'ionicons/icons';
+import { cashOutline, fileTrayFull, wallet } from 'ionicons/icons';
 import React, { useContext } from 'react';
 import { Redirect, Route } from 'react-router';
 import { AuthContext } from './App';
@@ -14,6 +14,9 @@ import PrivateRoute from './components/routes/PrivateRoute';
 import Cadastrar from './pages/auth/Cadastrar';
 import Login from './pages/auth/Login';
 import VerificacaoEmailEnviado from './pages/auth/VerificacaoEmailEnviado';
+import Categorias from './pages/categorias/Categorias';
+import CategoriasAdicionar from './pages/categorias/CategoriasAdicionar';
+import CategoriasEditar from './pages/categorias/CategoriasEditar';
 import Contas from './pages/contas/Contas';
 import ContasAdicionar from './pages/contas/ContasAdicionar';
 import ContasEditar from './pages/contas/ContasEditar';
@@ -37,6 +40,15 @@ export function MainRoutes(): JSX.Element {
       </PrivateRoute>
       <PrivateRoute exact path="/contas/editar/:id">
         <ContasEditar />
+      </PrivateRoute>
+      <PrivateRoute exact path="/categorias">
+        <Categorias />
+      </PrivateRoute>
+      <PrivateRoute exact path="/categorias/adicionar">
+        <CategoriasAdicionar />
+      </PrivateRoute>
+      <PrivateRoute exact path="/categorias/editar/:id">
+        <CategoriasEditar />
       </PrivateRoute>
       <PrivateRoute exact path="/movimentacoes">
         <Movimentacoes />
@@ -72,6 +84,9 @@ export default function Routes(): JSX.Element {
             </IonTabButton>
             <IonTabButton tab="contas" href="/contas">
               <IonIcon icon={wallet} />
+            </IonTabButton>
+            <IonTabButton tab="categorias" href="/categorias">
+              <IonIcon icon={fileTrayFull} />
             </IonTabButton>
             {/* <IonTabButton onClick={() => openMenu()}>
               <IonIcon icon={menu} onClick={() => openMenu()} />

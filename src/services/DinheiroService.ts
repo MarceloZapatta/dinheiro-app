@@ -49,6 +49,28 @@ export interface ContasResponse extends Omit<DinheiroResponse, 'data'> {
 export interface ContaResponse extends Omit<DinheiroResponse, 'data'> {
   data: Conta | null;
 }
+
+export interface Categoria {
+  id: number;
+  nome: string;
+  cor: Cor;
+  icone: string;
+}
+
+export interface CategoriaStore {
+  id?: number;
+  nome: string;
+  // eslint-disable-next-line camelcase
+  cor_id: number;
+}
+
+export interface CategoriasResponse extends Omit<DinheiroResponse, 'data'> {
+  data: Categoria[];
+}
+
+export interface CategoriaResponse extends Omit<DinheiroResponse, 'data'> {
+  data: Categoria | null;
+}
 export interface Cor {
   id: number;
   nome: string;
@@ -168,9 +190,9 @@ export default class DinheiroService {
       }));
   }
 
-  async getContas(): Promise<ContasResponse> {
+  async getCores(): Promise<CoresResponse> {
     return axios
-      .get<ContasResponse>(`${this.baseUrl}v1/contas`)
+      .get<CoresResponse>(`${this.baseUrl}v1/cores`)
       .then((response) => response.data)
       .catch((error: AxiosError) => ({
         sucesso: false,
@@ -180,9 +202,9 @@ export default class DinheiroService {
       }));
   }
 
-  async getCores(): Promise<CoresResponse> {
+  async getContas(): Promise<ContasResponse> {
     return axios
-      .get<CoresResponse>(`${this.baseUrl}v1/cores`)
+      .get<ContasResponse>(`${this.baseUrl}v1/contas`)
       .then((response) => response.data)
       .catch((error: AxiosError) => ({
         sucesso: false,
@@ -213,6 +235,42 @@ export default class DinheiroService {
   async deleteConta(id: number): Promise<ContasResponse> {
     return axios
       .delete<ContasResponse>(`${this.baseUrl}v1/contas/${id}`)
+      .then((response) => response.data);
+  }
+
+  async getCategorias(): Promise<CategoriasResponse> {
+    return axios
+      .get<CategoriasResponse>(`${this.baseUrl}v1/categorias`)
+      .then((response) => response.data)
+      .catch((error: AxiosError) => ({
+        sucesso: false,
+        mensagem: error.message,
+        status_codigo: Number(error.code),
+        data: [],
+      }));
+  }
+
+  storeCategoria(conta: CategoriaStore): Promise<CategoriaResponse> {
+    return axios
+      .post<CategoriaResponse>(`${this.baseUrl}v1/categorias`, conta)
+      .then((response) => response.data);
+  }
+
+  updateCategoria(conta: CategoriaStore): Promise<CategoriaResponse> {
+    return axios
+      .put<CategoriaResponse>(`${this.baseUrl}v1/categorias/${conta.id}`, conta)
+      .then((response) => response.data);
+  }
+
+  async getCategoria(id: number): Promise<CategoriaResponse> {
+    return axios
+      .get<CategoriaResponse>(`${this.baseUrl}v1/categorias/${id}`)
+      .then((response) => response.data);
+  }
+
+  async deleteCategoria(id: number): Promise<CategoriasResponse> {
+    return axios
+      .delete<CategoriasResponse>(`${this.baseUrl}v1/categorias/${id}`)
       .then((response) => response.data);
   }
 }
