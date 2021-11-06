@@ -151,7 +151,7 @@ export default function Cadastrar(): JSX.Element {
             {({ values, errors, handleChange, isSubmitting }) => (
               <Form>
                 <IonRow class="ion-margin-top">
-                  <IonCol size-lg="4" offset-lg="4" size-md="8" offset-md="2">
+                  <IonCol size-lg="6" offset-lg="3" size-md="8" offset-md="2">
                     <IonList>
                       <IonRadioGroup
                         name="organizacaoTipoId"
@@ -233,7 +233,7 @@ export default function Cadastrar(): JSX.Element {
                   </>
                 )}
                 <IonRow>
-                  <IonCol size-lg="4" offset-lg="4" size-md="8" offset-md="2">
+                  <IonCol size-lg="6" offset-lg="3" size-md="8" offset-md="2">
                     <IonButton
                       title="Cadastrar"
                       expand="block"

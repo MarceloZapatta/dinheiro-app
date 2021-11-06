@@ -1,21 +1,12 @@
 import React from 'react';
-import {
-  IonContent,
-  IonPage,
-  IonRow,
-  IonGrid,
-  IonCol,
-  IonFab,
-  IonFabButton,
-  IonIcon,
-} from '@ionic/react';
+import { IonContent, IonPage, IonRow, IonGrid, IonCol } from '@ionic/react';
 
 import { Form, Formik } from 'formik';
 import { useHistory } from 'react-router';
-import { checkmark } from 'ionicons/icons';
 import Header from '../../components/Header';
 import ContasForm from './ContasForm';
 import DinheiroService from '../../services/DinheiroService';
+import ButtonAdicionar from '../../components/button-adicionar/ButtonAdicionar';
 
 export interface ContasValues {
   nome: string;
@@ -122,15 +113,14 @@ export default function ContasAdicionar(): JSX.Element {
             {({ isSubmitting, submitForm }) => (
               <Form>
                 <IonRow class="ion-margin-top">
-                  <IonCol size-lg="4" offset-lg="4" size-md="8" offset-md="2">
+                  <IonCol size-lg="6" offset-lg="3" size-md="8" offset-md="2">
                     <ContasForm />
                   </IonCol>
                 </IonRow>
-                <IonFab vertical="bottom" horizontal="end" slot="fixed">
-                  <IonFabButton disabled={isSubmitting} onClick={submitForm}>
-                    <IonIcon icon={checkmark} />
-                  </IonFabButton>
-                </IonFab>
+                <ButtonAdicionar
+                  action={() => submitForm()}
+                  isSubmitting={isSubmitting}
+                />
               </Form>
             )}
           </Formik>

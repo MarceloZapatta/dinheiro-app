@@ -41,7 +41,7 @@ export default function Contas(): JSX.Element {
       <IonContent>
         <IonGrid>
           <IonRow class="ion-margin-top">
-            <IonCol size-lg="4" offset-lg="4" size-md="8" offset-md="2">
+            <IonCol size-lg="6" offset-lg="3" size-md="8" offset-md="2">
               <IonList>
                 {contas.map((conta) => (
                   <IonItem button routerLink={`/contas/editar/${conta.id}`}>

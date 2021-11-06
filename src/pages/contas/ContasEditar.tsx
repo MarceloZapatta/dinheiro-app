@@ -5,15 +5,11 @@ import {
   IonRow,
   IonGrid,
   IonCol,
-  IonFab,
-  IonFabButton,
-  IonIcon,
   useIonAlert,
 } from '@ionic/react';
 
 import { Form, Formik } from 'formik';
 import { useHistory, useParams } from 'react-router';
-import { checkmark } from 'ionicons/icons';
 import Header from '../../components/Header';
 import ContasForm from './ContasForm';
 import DinheiroService, { Conta } from '../../services/DinheiroService';
@@ -166,15 +162,14 @@ export default function ContasEditar(): JSX.Element {
               {({ isSubmitting, submitForm }) => (
                 <Form>
                   <IonRow class="ion-margin-top">
-                    <IonCol size-lg="4" offset-lg="4" size-md="8" offset-md="2">
+                    <IonCol size-lg="6" offset-lg="3" size-md="8" offset-md="2">
                       <ContasForm conta={conta} />
                     </IonCol>
                   </IonRow>
-                  <IonFab vertical="bottom" horizontal="end" slot="fixed">
-                    <IonFabButton disabled={isSubmitting} onClick={submitForm}>
-                      <IonIcon icon={checkmark} />
-                    </IonFabButton>
-                  </IonFab>
+                  <ButtonAdicionar
+                    action={() => submitForm()}
+                    isSubmitting={isSubmitting}
+                  />
                   <ButtonExcluir action={() => handleExcluir()} />
                 </Form>
               )}

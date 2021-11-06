@@ -152,7 +152,7 @@ export default function MovimentacoesEditar(): JSX.Element {
               {({ isSubmitting, submitForm }) => (
                 <Form>
                   <IonRow class="ion-margin-top">
-                    <IonCol size-lg="4" offset-lg="4" size-md="8" offset-md="2">
+                    <IonCol size-lg="6" offset-lg="3" size-md="8" offset-md="2">
                       <MovimentacoesForm movimentacao={movimentacao} />
                     </IonCol>
                   </IonRow>

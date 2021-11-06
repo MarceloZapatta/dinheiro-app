@@ -5,20 +5,17 @@ import {
   IonRow,
   IonGrid,
   IonCol,
-  IonFab,
-  IonFabButton,
-  IonIcon,
   useIonAlert,
 } from '@ionic/react';
 
 import { Form, Formik } from 'formik';
 import { useHistory, useParams } from 'react-router';
-import { checkmark } from 'ionicons/icons';
 import Header from '../../components/Header';
 import CategoriasForm from './CategoriasForm';
 import DinheiroService, { Categoria } from '../../services/DinheiroService';
 import ButtonExcluir from '../../components/button-excluir/ButtonExcluir';
 import { CategoriasValues, CategoriasErrosValues } from './CategoriasAdicionar';
+import ButtonAdicionar from '../../components/button-adicionar/ButtonAdicionar';
 
 export default function CategoriasEditar(): JSX.Element {
   const { id } = useParams();
@@ -147,15 +144,14 @@ export default function CategoriasEditar(): JSX.Element {
               {({ isSubmitting, submitForm }) => (
                 <Form>
                   <IonRow class="ion-margin-top">
-                    <IonCol size-lg="4" offset-lg="4" size-md="8" offset-md="2">
+                    <IonCol size-lg="6" offset-lg="3" size-md="8" offset-md="2">
                       <CategoriasForm categoria={categoria} />
                     </IonCol>
                   </IonRow>
-                  <IonFab vertical="bottom" horizontal="end" slot="fixed">
-                    <IonFabButton disabled={isSubmitting} onClick={submitForm}>
-                      <IonIcon icon={checkmark} />
-                    </IonFabButton>
-                  </IonFab>
+                  <ButtonAdicionar
+                    action={() => submitForm()}
+                    isSubmitting={isSubmitting}
+                  />
                   <ButtonExcluir action={() => handleExcluir()} />
                 </Form>
               )}
