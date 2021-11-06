@@ -1,5 +1,5 @@
 import React from 'react';
-import { IonFab, IonFabButton, IonIcon } from '@ionic/react';
+import { IonFab, IonFabButton, IonIcon, IonSpinner } from '@ionic/react';
 import { checkmark } from 'ionicons/icons';
 
 interface ButtonAdicionarProps {
@@ -18,7 +18,7 @@ export default function ButtonAdicionar(
   return (
     <IonFab vertical={vertical} horizontal={horizontal} slot={slot}>
       <IonFabButton disabled={isSubmitting} onClick={action}>
-        <IonIcon icon={icon || checkmark} />
+        {isSubmitting ? <IonSpinner /> : <IonIcon icon={icon || checkmark} />}
       </IonFabButton>
     </IonFab>
   );

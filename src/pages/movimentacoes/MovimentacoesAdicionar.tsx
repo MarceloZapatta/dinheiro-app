@@ -1,123 +1,128 @@
 import React from 'react';
-
-import {
-  IonPage,
-  IonContent,
-  IonList,
-  IonItem,
-  IonInput,
-  IonLabel,
-  IonFooter,
-  IonToolbar,
-  IonButton,
-  IonIcon,
-  IonDatetime,
-} from '@ionic/react';
-
-import './MovimentacoesAdicionar.css';
-import { Link } from 'react-router-dom';
-import { addOutline } from 'ionicons/icons';
+import { IonContent, IonPage, IonRow, IonGrid, IonCol } from '@ionic/react';
+import moment from 'moment';
+import * as Yup from 'yup';
+import { Form, Formik } from 'formik';
+import { useHistory } from 'react-router';
 import Header from '../../components/Header';
+import MovimentacoesForm from './MovimentacoesForm';
+import DinheiroService from '../../services/DinheiroService';
+import ButtonAdicionar from '../../components/button-adicionar/ButtonAdicionar';
 
-interface StateInterface {
+export interface MovimentacoesValues {
+  descricao: string;
+  observacoes: string;
   valor: number;
-  valorFormatado: string;
+  // eslint-disable-next-line camelcase
+  data_transacao: string;
+  // eslint-disable-next-line camelcase
+  conta_id: number;
+  // eslint-disable-next-line camelcase
+  categoria_id: number;
 }
 
-export default class MovimentacoesAdicionar extends React.Component<
-  unknown,
-  StateInterface
-> {
-  constructor(props: unknown) {
-    super(props);
+export interface MovimentacoesErrosValues {
+  descricao?: string;
+  observacoes?: string;
+  valor?: number;
+  // eslint-disable-next-line camelcase
+  data_transacao?: string;
+  // eslint-disable-next-line camelcase
+  conta_id?: number;
+  // eslint-disable-next-line camelcase
+  categoria_id?: number;
+}
 
-    this.state = {
-      valor: 0.0,
-      valorFormatado: 'R$ 0,00',
-    };
+export default function MovimentacoesAdicionar(): JSX.Element {
+  const history = useHistory();
+
+  function handleSubmit(
+    values: MovimentacoesValues,
+    { setSubmitting, setErrors }: any
+  ) {
+    const dinheiroService = new DinheiroService();
+    return dinheiroService
+      .storeMovimentacao(values)
+      .then((response) => {
+        if (response.sucesso !== true) {
+          if (response.mensagem === 'Network request failed') {
+            response.mensagem = 'Erro de conexão. Tente novamente mais tarde.';
+          }
+
+          if (response.status_codigo === 422 && response.erros) {
+            if (Object.keys(response.erros).length > 0) {
+              setErrors(dinheiroService.transformDinheiroErros(response.erros));
+            }
+          }
+        } else {
+          history.push('/movimentacoes');
+        }
+
+        setSubmitting(false);
+      })
+      .catch((error) => {
+        setSubmitting(false);
+
+        if (
+          error.response.data &&
+          error.response.data.status_codigo === 422 &&
+          error.response.data.erros
+        ) {
+          if (Object.keys(error.response.data.erros).length > 0) {
+            const erros = dinheiroService.transformDinheiroErros(
+              error.response.data.erros
+            );
+
+            setErrors(erros);
+          }
+        }
+      });
   }
 
-  handleCurrencyInput(e: KeyboardEvent): void {
-    e.preventDefault();
-
-    const keyEntered = e.key;
-    const keyCodEntered = e.keyCode;
-    const keyCodeBackspace = 8;
-    const keyCodeDelete = 46;
-
-    const { valor } = this.state;
-    let valorNovo = valor;
-
-    if (keyCodEntered === keyCodeBackspace || keyCodEntered === keyCodeDelete) {
-      valorNovo /= 10;
-      const valorString = valorNovo.toFixed(2);
-      valorNovo = Number(valorString);
-    } else {
-      if (!Number.isNaN(Number(keyEntered))) {
-        return;
-      }
-
-      valorNovo *= 10;
-      const valorDecimal = Number(keyEntered) / 100;
-      valorNovo = Number(valorNovo.toFixed(2)) + valorDecimal;
-      valorNovo = Number(valorNovo.toFixed(2));
-    }
-
-    valorNovo = Math.abs(valorNovo);
-
-    const valorFormatadoNovo = this.formatMoney(valorNovo);
-
-    this.setState({
-      valor: valorNovo,
-      valorFormatado: valorFormatadoNovo,
-    });
-  }
-
-  formatMoney = (valorNumerico: number): string => {
-    return Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-      maximumFractionDigits: 2,
-    }).format(valorNumerico);
-  };
-
-  render(): JSX.Element {
-    const { valorFormatado } = this.state;
-
-    return (
-      <IonPage>
-        <Header titulo="Adicionar" />
-        <IonContent>
-          <IonList>
-            <IonItem>
-              <IonLabel position="floating">Data</IonLabel>
-              <IonDatetime max="2200" min="1900" displayFormat="DD/MM/YYYY" />
-            </IonItem>
-            <IonItem>
-              <IonLabel position="floating">Descrição</IonLabel>
-              <IonInput />
-            </IonItem>
-            <IonItem>
-              <IonLabel position="floating">Valor</IonLabel>
-              <IonInput
-                type="text"
-                value={valorFormatado}
-                onKeyDown={(e) => this.handleCurrencyInput(e.nativeEvent)}
-              />
-            </IonItem>
-          </IonList>
-        </IonContent>
-        <IonFooter>
-          <IonToolbar class="ion-text-center">
-            <Link color="primary" to="/movimentacoes/adicionar">
-              <IonButton fill="clear">
-                <IonIcon icon={addOutline} />
-                Adicionar
-              </IonButton>
-            </Link>
-          </IonToolbar>
-        </IonFooter>
-      </IonPage>
-    );
-  }
+  return (
+    <IonPage data-testid="login-page">
+      <Header titulo="Movimentacoes" defaultHref="/movimentacoes" />
+      <IonContent>
+        <IonGrid>
+          <Formik
+            initialValues={{
+              descricao: '',
+              observacoes: '',
+              valor: 0,
+              data_transacao: moment().format('DD/MM/YYYY'),
+              conta_id: 0,
+              categoria_id: 0,
+            }}
+            onSubmit={(values, functions) => handleSubmit(values, functions)}
+            validationSchema={Yup.object().shape({
+              descricao: Yup.string().required('A descrição é obrigatória.'),
+              observacoes: Yup.string(),
+              valor: Yup.number().required(
+                'O valor da movimentação é obrigatório.'
+              ),
+              data_transacao: Yup.string().required(
+                'A data da transação é obrigatória.'
+              ),
+              conta_id: Yup.number().required('A conta é obrigatória.'),
+              categoria_id: Yup.number().required('A categoria é obrigatória.'),
+            })}
+          >
+            {({ isSubmitting, submitForm }) => (
+              <Form>
+                <IonRow class="ion-margin-top">
+                  <IonCol size-lg="4" offset-lg="4" size-md="8" offset-md="2">
+                    <MovimentacoesForm />
+                  </IonCol>
+                </IonRow>
+                <ButtonAdicionar
+                  action={() => submitForm()}
+                  isSubmitting={isSubmitting}
+                />
+              </Form>
+            )}
+          </Formik>
+        </IonGrid>
+      </IonContent>
+    </IonPage>
+  );
 }

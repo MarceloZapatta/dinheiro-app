@@ -71,6 +71,38 @@ export interface CategoriasResponse extends Omit<DinheiroResponse, 'data'> {
 export interface CategoriaResponse extends Omit<DinheiroResponse, 'data'> {
   data: Categoria | null;
 }
+
+export interface Movimentacao {
+  id: number;
+  descricao: string;
+  observacoes: string;
+  conta: Conta;
+  categoria: Categoria;
+  // eslint-disable-next-line camelcase
+  data_transacao: string;
+  valor: number;
+}
+
+export interface MovimentacaoStore {
+  id?: number;
+  descricao: string;
+  observacoes: string;
+  valor: number;
+  // eslint-disable-next-line camelcase
+  data_transacao: string;
+  // eslint-disable-next-line camelcase
+  conta_id: number;
+  // eslint-disable-next-line camelcase
+  categoria_id: number;
+}
+
+export interface MovimentacoesResponse extends Omit<DinheiroResponse, 'data'> {
+  data: Movimentacao[];
+}
+
+export interface MovimentacaoResponse extends Omit<DinheiroResponse, 'data'> {
+  data: Movimentacao | null;
+}
 export interface Cor {
   id: number;
   nome: string;
@@ -271,6 +303,51 @@ export default class DinheiroService {
   async deleteCategoria(id: number): Promise<CategoriasResponse> {
     return axios
       .delete<CategoriasResponse>(`${this.baseUrl}v1/categorias/${id}`)
+      .then((response) => response.data);
+  }
+
+  async getMovimentacoes(values: any): Promise<MovimentacoesResponse> {
+    return axios
+      .get<MovimentacoesResponse>(
+        `${this.baseUrl}v1/movimentacoes?${new URLSearchParams(
+          values
+        ).toString()}`
+      )
+      .then((response) => response.data)
+      .catch((error: AxiosError) => ({
+        sucesso: false,
+        mensagem: error.message,
+        status_codigo: Number(error.code),
+        data: [],
+      }));
+  }
+
+  storeMovimentacao(conta: MovimentacaoStore): Promise<MovimentacaoResponse> {
+    return axios
+      .post<MovimentacaoResponse>(`${this.baseUrl}v1/movimentacoes`, conta)
+      .then((response) => response.data);
+  }
+
+  updateMovimentacao(
+    movimentacao: MovimentacaoStore
+  ): Promise<MovimentacaoResponse> {
+    return axios
+      .put<MovimentacaoResponse>(
+        `${this.baseUrl}v1/movimentacoes/${movimentacao.id}`,
+        movimentacao
+      )
+      .then((response) => response.data);
+  }
+
+  async getMovimentacao(id: number): Promise<MovimentacaoResponse> {
+    return axios
+      .get<MovimentacaoResponse>(`${this.baseUrl}v1/movimentacoes/${id}`)
+      .then((response) => response.data);
+  }
+
+  async deleteMovimentacao(id: number): Promise<MovimentacoesResponse> {
+    return axios
+      .delete<MovimentacoesResponse>(`${this.baseUrl}v1/movimentacoes/${id}`)
       .then((response) => response.data);
   }
 }

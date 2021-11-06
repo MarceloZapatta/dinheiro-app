@@ -47,7 +47,7 @@ export default function TextMask(props: TextMaskProps): JSX.Element {
       setValue(e.detail.value);
 
       if (money) {
-        e.detail.value = currentValueNumbers;
+        e.detail.value = String(Number(currentValueNumbers) / 100);
       }
 
       onChange(e);

@@ -22,6 +22,7 @@ import ContasAdicionar from './pages/contas/ContasAdicionar';
 import ContasEditar from './pages/contas/ContasEditar';
 import Movimentacoes from './pages/movimentacoes/Movimentacoes';
 import MovimentacoesAdicionar from './pages/movimentacoes/MovimentacoesAdicionar';
+import MovimentacoesEditar from './pages/movimentacoes/MovimentacoesEditar';
 import SelecionarOrganizacao from './pages/selecionar-organizacao/SelecionarOrganizacao';
 
 export function MainRoutes(): JSX.Element {
@@ -55,6 +56,9 @@ export function MainRoutes(): JSX.Element {
       </PrivateRoute>
       <PrivateRoute path="/movimentacoes/adicionar" exact>
         <MovimentacoesAdicionar />
+      </PrivateRoute>
+      <PrivateRoute path="/movimentacoes/editar/:id" exact>
+        <MovimentacoesEditar />
       </PrivateRoute>
       <Route
         exact
