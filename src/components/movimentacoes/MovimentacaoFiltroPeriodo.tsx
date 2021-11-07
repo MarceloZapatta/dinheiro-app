@@ -1,5 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { IonItem, IonLabel, IonIcon } from '@ionic/react';
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  IonItem,
+  IonLabel,
+  IonIcon,
+  IonButton,
+  IonDatetime,
+} from '@ionic/react';
 import { chevronBackOutline, chevronForwardOutline } from 'ionicons/icons';
 import { useFormikContext } from 'formik';
 import moment from 'moment';
@@ -21,7 +27,8 @@ export default function MovimentacaoFiltroPeriodo(): JSX.Element {
   ];
   const [mesAtual, setMesAtual] = useState('');
   const [dataAtual, setDataAtual] = useState(moment());
-  const { setFieldValue, submitForm } = useFormikContext();
+  const dataRef = useRef<HTMLIonDatetimeElement>(null);
+  const { setFieldValue, submitForm, isSubmitting } = useFormikContext();
 
   useEffect(() => {
     setMesAtual(meses[dataAtual.month()]);
@@ -42,27 +49,90 @@ export default function MovimentacaoFiltroPeriodo(): JSX.Element {
   }
 
   function handleAnteriorMes() {
-    setDataAtual(dataAtual.subtract(1, 'month'));
+    const novaData = dataAtual.clone().subtract(1, 'month');
+    setDataAtual(novaData);
     setMesAtual(meses[dataAtual.month()]);
+    setFieldValue(
+      'data_inicio',
+      novaData.clone().startOf('month').format('YYYY-MM-DD HH:mm:ss')
+    );
+    setFieldValue(
+      'data_fim',
+      novaData.clone().endOf('month').format('YYYY-MM-DD HH:mm:ss')
+    );
+    submitForm();
+  }
+
+  function handleChangeDate(e: any) {
+    if (e.detail.value) {
+      const data = moment(e.detail.value);
+      setFieldValue(
+        'data_inicio',
+        data.clone().startOf('month').format('DD/MM/YYYY')
+      );
+      setFieldValue(
+        'data_fim',
+        data.clone().endOf('month').format('DD/MM/YYYY')
+      );
+      setDataAtual(data);
+      submitForm();
+    }
+  }
+
+  function handleClickData() {
+    if (dataRef.current) {
+      dataRef.current.open();
+    }
   }
 
   return (
     <IonItem className="movimentacao-filtro-periodo">
-      <IonIcon
-        icon={chevronBackOutline}
-        slot="start"
-        className="icon-mudar-mes"
+      <IonButton
+        fill="clear"
+        color="tertiary"
+        size="default"
         onClick={() => handleAnteriorMes()}
-      />
+        disabled={isSubmitting}
+      >
+        <IonIcon
+          icon={chevronBackOutline}
+          slot="icon-only"
+          className="icon-mudar-mes"
+        />
+      </IonButton>
       <IonLabel className="ion-text-center">
-        {mesAtual} / {dataAtual.year()}
+        <IonButton
+          fill="clear"
+          color="tertiary"
+          onClick={() => handleClickData()}
+        >
+          {mesAtual} / {dataAtual.year()}
+        </IonButton>
+        <IonDatetime
+          value={dataAtual.toISOString()}
+          hidden
+          onIonChange={(e) => handleChangeDate(e)}
+          pickerFormat="MMMM/YYYY"
+          max="2100"
+          monthNames={meses}
+          ref={dataRef}
+          cancelText="Cancelar"
+          doneText="OK"
+        />
       </IonLabel>
-      <IonIcon
-        icon={chevronForwardOutline}
-        slot="end"
-        className="icon-mudar-mes"
+      <IonButton
+        fill="clear"
+        color="tertiary"
+        size="default"
         onClick={() => handleProximoMes()}
-      />
+        disabled={isSubmitting}
+      >
+        <IonIcon
+          icon={chevronForwardOutline}
+          slot="icon-only"
+          className="icon-mudar-mes"
+        />
+      </IonButton>
     </IonItem>
   );
 }

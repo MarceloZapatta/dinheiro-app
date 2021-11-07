@@ -14,6 +14,7 @@ import Header from '../../components/Header';
 import ContasForm from './ContasForm';
 import DinheiroService, { Conta } from '../../services/DinheiroService';
 import ButtonExcluir from '../../components/button-excluir/ButtonExcluir';
+import ButtonAdicionar from '../../components/button-adicionar/ButtonAdicionar';
 
 export interface ContasValues {
   id?: number;

@@ -309,9 +309,7 @@ export default class DinheiroService {
   async getMovimentacoes(values: any): Promise<MovimentacoesResponse> {
     return axios
       .get<MovimentacoesResponse>(
-        `${this.baseUrl}v1/movimentacoes?${new URLSearchParams(
-          values
-        ).toString()}`
+        `${this.baseUrl}v1/movimentacoes?${this.buildParams(values).toString()}`
       )
       .then((response) => response.data)
       .catch((error: AxiosError) => ({
@@ -349,5 +347,20 @@ export default class DinheiroService {
     return axios
       .delete<MovimentacoesResponse>(`${this.baseUrl}v1/movimentacoes/${id}`)
       .then((response) => response.data);
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  buildParams(data: any): URLSearchParams {
+    const params = new URLSearchParams();
+
+    Object.entries(data).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        Object.entries(value).forEach(([keyArray, valueArray]) =>
+          params.append(`${key}[]`, String(valueArray))
+        );
+      } else params.append(key, String(value));
+    });
+
+    return params;
   }
 }
