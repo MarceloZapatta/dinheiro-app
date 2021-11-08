@@ -5,6 +5,8 @@ import {
   IonLabel,
   IonInput,
   IonDatetime,
+  IonSelect,
+  IonSelectOption,
 } from '@ionic/react';
 import './Movimentacoes.scss';
 import { useFormikContext } from 'formik';
@@ -35,6 +37,18 @@ export default function MovimentacoesForm(
   const { movimentacao } = props;
   return (
     <IonList>
+      <IonItem>
+        <IonLabel>Tipo</IonLabel>
+        <IonSelect
+          name="despesa"
+          value={String(values.despesa)}
+          onIonChange={handleChange}
+          cancelText="Cancelar"
+        >
+          <IonSelectOption value="1">Despesa</IonSelectOption>
+          <IonSelectOption value="0">Receita</IonSelectOption>
+        </IonSelect>
+      </IonItem>
       <IonItem>
         <IonLabel position="floating">Data</IonLabel>
         <IonDatetime

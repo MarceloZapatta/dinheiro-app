@@ -36,3 +36,13 @@
     color: #b91bc8ff;
   }
 }
+
+.valor {
+  &.valor--danger {
+    color: var(--ion-color-danger);
+  }
+
+  &.valor--success {
+    color: var(--ion-color-success);
+  }
+}

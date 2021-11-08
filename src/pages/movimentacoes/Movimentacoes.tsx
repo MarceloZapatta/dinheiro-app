@@ -28,6 +28,8 @@ import ButtonFiltrar from '../../components/button-filtrar/ButtonFiltrar';
 import MovimentacaoFiltros from '../../components/movimentacoes/MovimentacaoFiltros';
 import CategoriaContainer from '../../components/categorias/CategoriaContainer';
 import ContaContainer from '../../components/contas/ContaContainer';
+import './Movimentacoes.scss';
+import MovimentacoesSaldos from './MovimentacoesSaldos';
 
 export interface MovimentacoesFiltros {
   // eslint-disable-next-line camelcase
@@ -40,6 +42,7 @@ export interface MovimentacoesFiltros {
 
 export default function Movimentacoes(): JSX.Element {
   const [movimentacoes, setMovimentacoes] = useState<Movimentacao[]>([]);
+  const [meta, setMeta] = useState({ saldo: 0, saldo_previsto: 0 });
   const [showModalMovimentacaoFiltros, setShowModalMovimentacaoFiltros] =
     useState(false);
   const history = useHistory();
@@ -63,7 +66,12 @@ export default function Movimentacoes(): JSX.Element {
       categorias: values.categorias.map((categoria: Categoria) => categoria.id),
       contas: values.contas.map((conta: Conta) => conta.id),
     })
-      .then((response) => setMovimentacoes(response.data))
+      .then((response) => {
+        if (response.meta) {
+          setMeta(response.meta);
+        }
+        setMovimentacoes(response.data);
+      })
       .then(() => setSubmitting(false));
   }
 
@@ -81,13 +89,22 @@ export default function Movimentacoes(): JSX.Element {
           onSubmit={(values, functions) => handleSubmit(values, functions)}
           innerRef={formRef}
         >
-          {({ isSubmitting }) => (
+          {({ values, isSubmitting }) => (
             <Form>
               <IonGrid>
                 <IonRow class="ion-margin-top">
                   <IonCol size-lg="6" offset-lg="3" size-md="8" offset-md="2">
                     <IonList>
                       <MovimentacaoFiltroPeriodo />
+                      <MovimentacoesSaldos
+                        saldo={meta.saldo}
+                        saldoPrevisto={meta.saldo_previsto}
+                        isLoading={isSubmitting}
+                        hideSaldoPrevisto={moment(
+                          values.data_fim,
+                          'DD/MM/YYYY'
+                        ).isBefore(moment())}
+                      />
                       {isSubmitting ? (
                         <MovimentacoesSkeleton />
                       ) : (
@@ -125,7 +142,13 @@ export default function Movimentacoes(): JSX.Element {
                               </IonLabel>
                             </IonCol>
                             <IonCol size="5" className="ion-text-right">
-                              <small className="ion-margin-end">
+                              <small
+                                className={`ion-margin-end valor ${
+                                  movimentacao.valor < 0
+                                    ? 'valor--danger'
+                                    : 'valor--success'
+                                }`}
+                              >
                                 {Intl.NumberFormat('pt-BR', {
                                   style: 'currency',
                                   currency: 'BRL',

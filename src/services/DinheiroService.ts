@@ -8,6 +8,7 @@ interface DinheiroResponse {
   data: Record<string, unknown>;
   mensagem: string;
   erros?: Record<string, unknown>[];
+  meta?: Record<string, unknown>[];
 }
 
 export interface Organizacao {
@@ -96,8 +97,14 @@ export interface MovimentacaoStore {
   categoria_id: number;
 }
 
-export interface MovimentacoesResponse extends Omit<DinheiroResponse, 'data'> {
+export interface MovimentacoesResponse
+  extends Omit<DinheiroResponse, 'data' | 'meta'> {
   data: Movimentacao[];
+  meta?: {
+    saldo: number;
+    // eslint-disable-next-line camelcase
+    saldo_previsto: number;
+  };
 }
 
 export interface MovimentacaoResponse extends Omit<DinheiroResponse, 'data'> {

@@ -135,6 +135,10 @@ export default function MovimentacoesEditar(): JSX.Element {
               initialValues={movimentacao}
               onSubmit={(values, functions) => handleSubmit(values, functions)}
               validationSchema={Yup.object().shape({
+                despesa: Yup.number()
+                  .min(0)
+                  .max(1)
+                  .required('O tipo de transação é obrigatório'),
                 descricao: Yup.string().required('A descrição é obrigatória.'),
                 observacoes: Yup.string(),
                 valor: Yup.number().required(
