@@ -6,9 +6,11 @@ import {
   IonTabs,
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { cashOutline, fileTrayFull, wallet } from 'ionicons/icons';
+import { cashOutline, fileTrayFull, menuOutline, wallet } from 'ionicons/icons';
 import React, { useContext } from 'react';
 import { Redirect, Route } from 'react-router';
+import { menuController } from '@ionic/core';
+import Menu from './components/menu/Menu';
 import { AuthContext } from './App';
 import PrivateRoute from './components/routes/PrivateRoute';
 import Cadastrar from './pages/auth/Cadastrar';
@@ -30,6 +32,7 @@ export function MainRoutes(): JSX.Element {
 
   return (
     <>
+      <Menu />
       <PrivateRoute exact path="/selecionar-organizacao">
         <SelecionarOrganizacao />
       </PrivateRoute>
@@ -75,14 +78,27 @@ export function MainRoutes(): JSX.Element {
 
 export default function Routes(): JSX.Element {
   const authContext = useContext(AuthContext);
+
+  function handleOnTabsWillChange(e: any) {
+    if (e.detail.tab === 'menu') {
+      menuController.toggle();
+    }
+  }
+
   return (
     <IonReactRouter>
       {authContext.logado && authContext.organizacaoSelecionada ? (
         <IonTabs>
-          <IonRouterOutlet>
+          <IonRouterOutlet id="menu">
             <MainRoutes />
           </IonRouterOutlet>
-          <IonTabBar slot="bottom">
+          <IonTabBar
+            slot="bottom"
+            onIonTabsWillChange={(e) => handleOnTabsWillChange(e)}
+          >
+            <IonTabButton tab="menu">
+              <IonIcon icon={menuOutline} />
+            </IonTabButton>
             <IonTabButton tab="movimentacoes" href="/movimentacoes">
               <IonIcon icon={cashOutline} />
             </IonTabButton>

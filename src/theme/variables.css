@@ -234,3 +234,6 @@ body {
 /* } */
 
 @import '../assets/manrope/stylesheet.css';
+ion-item[button] {
+  pointer-events: auto !important;
+}
