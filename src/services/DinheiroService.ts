@@ -1,5 +1,11 @@
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import { CadastrarValues } from '../pages/auth/Cadastrar';
+import {
+  Convite,
+  Pessoa,
+} from '../pages/organizacoes/OrganizacacaoPerfilPessoas';
+import { OrganizacaoAdicionarValues } from '../pages/organizacoes/OrganizacaoAdicionar';
+import { OrganizacaoPerfilValues } from '../pages/organizacoes/OrganizacaoPerfil';
 
 interface DinheiroResponse {
   sucesso: boolean;
@@ -12,16 +18,36 @@ interface DinheiroResponse {
 }
 
 export interface Organizacao {
+  id: number;
   nome: string;
+  email: string;
   hash: string;
   tipo: {
     id: number;
     tipo: string;
   };
+  pessoas: Pessoa[];
+  convites: Convite[];
+  // eslint-disable-next-line camelcase
+  razao_social: string;
+  documento: string;
+  cep: string;
+  cidade: string;
+  complemento: string;
+  numero: string;
+  rua: string;
+  telefone: string;
+  // eslint-disable-next-line camelcase
+  uf_id: string;
 }
 
-export interface OrganizacaoResponse extends Omit<DinheiroResponse, 'data'> {
+export type OrganizacaoStore = Omit<OrganizacaoPerfilValues, 'id'>;
+
+export interface OrganizacoesResponse extends Omit<DinheiroResponse, 'data'> {
   data: Organizacao[];
+}
+export interface OrganizacaoResponse extends Omit<DinheiroResponse, 'data'> {
+  data: Organizacao | null;
 }
 
 export interface Conta {
@@ -110,6 +136,7 @@ export interface MovimentacoesResponse
 export interface MovimentacaoResponse extends Omit<DinheiroResponse, 'data'> {
   data: Movimentacao | null;
 }
+
 export interface Cor {
   id: number;
   nome: string;
@@ -118,6 +145,15 @@ export interface Cor {
 
 export interface CoresResponse extends Omit<DinheiroResponse, 'data'> {
   data: Cor[];
+}
+export interface Uf {
+  id: number;
+  nome: string;
+  sigla: string;
+}
+
+export interface UfsResponse extends Omit<DinheiroResponse, 'data'> {
+  data: Uf[];
 }
 
 export default class DinheiroService {
@@ -217,9 +253,9 @@ export default class DinheiroService {
     return formikErros;
   }
 
-  async getOrganizacoes(): Promise<OrganizacaoResponse> {
+  async getOrganizacoes(): Promise<OrganizacoesResponse> {
     return axios
-      .get<OrganizacaoResponse>(`${this.baseUrl}v1/organizacoes`)
+      .get<OrganizacoesResponse>(`${this.baseUrl}v1/organizacoes`)
       .then((response) => response.data)
       .catch((error: AxiosError) => ({
         sucesso: false,
@@ -227,6 +263,34 @@ export default class DinheiroService {
         status_codigo: Number(error.code),
         data: [],
       }));
+  }
+
+  async getOrganizacao(): Promise<OrganizacaoResponse> {
+    return axios
+      .get<OrganizacaoResponse>(`${this.baseUrl}v1/organizacoes/dados`)
+      .then((response) => response.data);
+  }
+
+  async updateOrganizacao(
+    values: OrganizacaoStore
+  ): Promise<OrganizacaoResponse> {
+    return axios
+      .put<OrganizacaoResponse>(`${this.baseUrl}v1/organizacoes`, values)
+      .then((response) => response.data);
+  }
+
+  async storeOrganizacao(
+    values: OrganizacaoAdicionarValues
+  ): Promise<OrganizacaoResponse> {
+    return axios
+      .post<OrganizacaoResponse>(`${this.baseUrl}v1/organizacoes`, values)
+      .then((response) => response.data);
+  }
+
+  async deleteOrganizacao(): Promise<OrganizacaoResponse> {
+    return axios
+      .delete<OrganizacaoResponse>(`${this.baseUrl}v1/organizacoes`)
+      .then((response) => response.data);
   }
 
   async getCores(): Promise<CoresResponse> {
@@ -369,5 +433,31 @@ export default class DinheiroService {
     });
 
     return params;
+  }
+
+  async aceitarConvite(token: string): Promise<DinheiroResponse> {
+    return axios
+      .post<DinheiroResponse>(`${this.baseUrl}v1/organizacoes/convite`, {
+        token,
+      })
+      .then((response) => response.data);
+  }
+
+  async deletePessoaVinculada(id: number): Promise<DinheiroResponse> {
+    return axios
+      .delete<DinheiroResponse>(`${this.baseUrl}v1/organizacoes/pessoas/${id}`)
+      .then((response) => response.data);
+  }
+
+  async deleteConvitePendente(id: number): Promise<DinheiroResponse> {
+    return axios
+      .delete<DinheiroResponse>(`${this.baseUrl}v1/organizacoes/convites/${id}`)
+      .then((response) => response.data);
+  }
+
+  async getUfs(): Promise<UfsResponse> {
+    return axios
+      .get<UfsResponse>(`${this.baseUrl}v1/ufs`)
+      .then((response) => response.data);
   }
 }

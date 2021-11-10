@@ -15,10 +15,10 @@ export default function PrivateRoute(props: PrivateRouteProps): JSX.Element {
   function handleRenderPrivateRoute() {
     if (authContext.logado) {
       return authContext.organizacaoSelecionada ||
-        path === '/selecionar-organizacao' ? (
+        path === '/organizacoes/selecionar' ? (
         children
       ) : (
-        <Redirect to="/selecionar-organizacao" />
+        <Redirect to="/organizacoes/selecionar" />
       );
     }
     return <Redirect to="/" />;

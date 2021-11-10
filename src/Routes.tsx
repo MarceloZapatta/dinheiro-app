@@ -25,7 +25,10 @@ import ContasEditar from './pages/contas/ContasEditar';
 import Movimentacoes from './pages/movimentacoes/Movimentacoes';
 import MovimentacoesAdicionar from './pages/movimentacoes/MovimentacoesAdicionar';
 import MovimentacoesEditar from './pages/movimentacoes/MovimentacoesEditar';
-import SelecionarOrganizacao from './pages/selecionar-organizacao/SelecionarOrganizacao';
+import OrganizacaoSelecionar from './pages/organizacoes/OrganizacaoSelecionar';
+import OrganizacaoPerfilEditar from './pages/organizacoes/OrganizacaoPerfil';
+import OrganizacaoConvite from './pages/organizacoes/OrganizacaoConvite';
+import OrganizacaoAdicionar from './pages/organizacoes/OrganizacaoAdicionar';
 
 export function MainRoutes(): JSX.Element {
   const authContext = useContext(AuthContext);
@@ -33,9 +36,18 @@ export function MainRoutes(): JSX.Element {
   return (
     <>
       <Menu />
-      <PrivateRoute exact path="/selecionar-organizacao">
-        <SelecionarOrganizacao />
+      <PrivateRoute exact path="/organizacoes/selecionar">
+        <OrganizacaoSelecionar />
       </PrivateRoute>
+      <PrivateRoute exact path="/organizacoes/perfil">
+        <OrganizacaoPerfilEditar />
+      </PrivateRoute>
+      <PrivateRoute exact path="/organizacoes/adicionar">
+        <OrganizacaoAdicionar />
+      </PrivateRoute>
+      <Route exact path="/organizacoes/convite/:token">
+        <OrganizacaoConvite />
+      </Route>
       <PrivateRoute exact path="/contas">
         <Contas />
       </PrivateRoute>

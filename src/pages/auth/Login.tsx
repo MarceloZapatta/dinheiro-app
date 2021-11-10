@@ -90,7 +90,14 @@ export default function Login(): JSX.Element {
 
       localStorage.setItem('auth.token', String(response.data.access_token));
       authContext.toggleLogado();
-      history.push('/movimentacoes');
+
+      const conviteToken = localStorage.getItem('organizacoes.convite.token');
+
+      if (localStorage.getItem('organizacoes.convite.token')) {
+        history.push(`/organizacoes/convite/${conviteToken}`);
+      } else {
+        history.push('/movimentacoes');
+      }
 
       return true;
     });
@@ -156,7 +163,7 @@ export default function Login(): JSX.Element {
       <IonContent>
         <IonGrid>
           <IonRow class="ion-margin-top">
-            <IonCol size-lg="6" offset-lg="3" size-md="8" offset-md="2">
+            <IonCol size-lg="4" offset-lg="4" size-md="8" offset-md="2">
               <IonItem>
                 <IonLabel position="floating">E-mail</IonLabel>
                 <IonInput

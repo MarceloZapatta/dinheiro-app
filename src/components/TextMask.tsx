@@ -9,7 +9,7 @@ interface TextMaskProps {
   testid: string;
   color: string;
   initialValue: string | number;
-  mask?: string;
+  mask?: string | string[];
   onChange: (e: CustomEvent) => void;
   money?: boolean;
   disabled?: boolean;
@@ -33,7 +33,6 @@ export default function TextMask(props: TextMaskProps): JSX.Element {
     const currentValue = e.detail.value;
     if (currentValue) {
       const currentValueNumbers = VMasker.toNumber(currentValue);
-
       if (money) {
         e.detail.value = VMasker.toMoney(currentValueNumbers, {
           precision: 2,
@@ -41,7 +40,24 @@ export default function TextMask(props: TextMaskProps): JSX.Element {
           delimiter: '.',
         });
       } else {
-        e.detail.value = VMasker.toPattern(currentValueNumbers, mask);
+        let currentMask: any = mask;
+
+        if (Array.isArray(mask)) {
+          // eslint-disable-next-line prefer-destructuring
+          currentMask = mask[0];
+          for (let index = 1; index < mask.length; index += 1) {
+            if (
+              currentValueNumbers.length >= VMasker.toNumber(mask[index]).length
+            ) {
+              currentMask = mask[index];
+            }
+          }
+        }
+
+        e.detail.value = VMasker.toPattern(
+          currentValueNumbers,
+          String(currentMask)
+        );
       }
 
       setValue(e.detail.value);
@@ -64,7 +80,24 @@ export default function TextMask(props: TextMaskProps): JSX.Element {
         delimiter: '.',
       });
     } else {
-      currentValue = VMasker.toPattern(currentValueNumbers, mask);
+      let currentMask: any = mask;
+
+      if (Array.isArray(mask)) {
+        // eslint-disable-next-line prefer-destructuring
+        currentMask = mask[0];
+        for (let index = 1; index < mask.length; index += 1) {
+          if (
+            currentValueNumbers.length > VMasker.toNumber(mask[index]).length
+          ) {
+            currentMask = mask[index];
+          }
+        }
+      }
+
+      currentValue = VMasker.toPattern(
+        currentValueNumbers,
+        String(currentMask)
+      );
     }
 
     setValue(currentValue);
@@ -78,7 +111,7 @@ export default function TextMask(props: TextMaskProps): JSX.Element {
       data-testid={testid}
       name={name}
       type="text"
-      value={`R$ ${value}`}
+      value={`${money ? 'R$ ' : ''}${value}`}
       color={color}
       onIonChange={(e) => handleChange(e)}
       disabled={disabled}

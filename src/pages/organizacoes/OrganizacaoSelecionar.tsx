@@ -11,19 +11,21 @@ import {
   IonCardContent,
   IonCardTitle,
   IonButton,
+  IonIcon,
 } from '@ionic/react';
 
-import './SelecionarOrganizacao.scss';
+import './OrganizacaoSelecionar.scss';
 
+import { add } from 'ionicons/icons';
 import Header from '../../components/Header';
 import { AuthContext } from '../../App';
 
 import Dinheiro, {
   Organizacao,
-  OrganizacaoResponse,
+  OrganizacoesResponse,
 } from '../../services/DinheiroService';
 
-export default function SelecionarOrganizacao(): JSX.Element {
+export default function OrganizacaoSelecionar(): JSX.Element {
   const [organizacoes, setOrganizacoes] = useState<Organizacao[]>();
   const history = useHistory();
   const authContext = useContext(AuthContext);
@@ -34,7 +36,7 @@ export default function SelecionarOrganizacao(): JSX.Element {
 
   async function fetchOrganizacoes() {
     const dinheiro = new Dinheiro();
-    const response: OrganizacaoResponse = await dinheiro.getOrganizacoes();
+    const response: OrganizacoesResponse = await dinheiro.getOrganizacoes();
     setOrganizacoes(response.data);
   }
 
@@ -56,7 +58,12 @@ export default function SelecionarOrganizacao(): JSX.Element {
               <IonRow>
                 {organizacoes &&
                   organizacoes.map((organizacao) => (
-                    <IonCol key={organizacao.hash}>
+                    <IonCol
+                      sizeXs="12"
+                      sizeMd="6"
+                      sizeLg="6"
+                      key={organizacao.hash}
+                    >
                       <IonCard>
                         <IonCardHeader>
                           <IonCardTitle>{organizacao.nome}</IonCardTitle>
@@ -73,6 +80,20 @@ export default function SelecionarOrganizacao(): JSX.Element {
                       </IonCard>
                     </IonCol>
                   ))}
+                <IonCol sizeXs="12" sizeMd="6" sizeLg="6" key={-1}>
+                  <IonCard>
+                    <IonCardHeader>
+                      <IonCardTitle>Criar nova organização</IonCardTitle>
+                    </IonCardHeader>
+                    <IonCardContent>
+                      <IonButton
+                        onClick={() => history.push('/organizacoes/adicionar')}
+                      >
+                        <IonIcon icon={add} />
+                      </IonButton>
+                    </IonCardContent>
+                  </IonCard>
+                </IonCol>
               </IonRow>
             </IonCol>
           </IonRow>

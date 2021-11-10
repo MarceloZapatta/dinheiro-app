@@ -44,6 +44,7 @@ export default function MovimentacoesForm(
           value={String(values.despesa)}
           onIonChange={handleChange}
           cancelText="Cancelar"
+          interface="popover"
         >
           <IonSelectOption value="1">Despesa</IonSelectOption>
           <IonSelectOption value="0">Receita</IonSelectOption>
