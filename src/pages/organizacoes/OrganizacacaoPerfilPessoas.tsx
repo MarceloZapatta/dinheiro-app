@@ -110,7 +110,11 @@ export default function OrganizacaoPerfilPessoas(
       )}
       {pessoasAtual.map((pessoa: Pessoa) => (
         <IonItem key={pessoa.id}>
-          {pessoa.nome} - {pessoa.email}
+          <IonLabel>
+            {pessoa.nome}
+            <br />
+            <small>{pessoa.email}</small>
+          </IonLabel>
           <IonButton
             fill="clear"
             slot="end"

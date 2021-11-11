@@ -43,6 +43,11 @@ export default function Contas(): JSX.Element {
           <IonRow class="ion-margin-top">
             <IonCol size-lg="6" offset-lg="3" size-md="8" offset-md="2">
               <IonList>
+                {contas.length <= 0 && (
+                  <IonItem>
+                    <IonLabel>Nenhuma conta encontrada.</IonLabel>
+                  </IonItem>
+                )}
                 {contas.map((conta) => (
                   <IonItem button routerLink={`/contas/editar/${conta.id}`}>
                     <IonLabel>

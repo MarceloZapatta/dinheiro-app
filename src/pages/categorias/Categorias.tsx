@@ -43,6 +43,11 @@ export default function Categorias(): JSX.Element {
           <IonRow class="ion-margin-top">
             <IonCol size-lg="6" offset-lg="3" size-md="8" offset-md="2">
               <IonList>
+                {categorias.length <= 0 && (
+                  <IonItem>
+                    <IonLabel>Nenhuma categoria encontrada.</IonLabel>
+                  </IonItem>
+                )}
                 {categorias.map((categoria) => (
                   <IonItem
                     button
