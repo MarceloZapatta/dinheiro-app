@@ -6,7 +6,13 @@ import {
   IonTabs,
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { cashOutline, fileTrayFull, menuOutline, wallet } from 'ionicons/icons';
+import {
+  cashOutline,
+  fileTrayFull,
+  menuOutline,
+  peopleSharp,
+  wallet,
+} from 'ionicons/icons';
 import React, { useContext } from 'react';
 import { Redirect, Route } from 'react-router';
 import { menuController } from '@ionic/core';
@@ -29,6 +35,10 @@ import OrganizacaoSelecionar from './pages/organizacoes/OrganizacaoSelecionar';
 import OrganizacaoPerfilEditar from './pages/organizacoes/OrganizacaoPerfil';
 import OrganizacaoConvite from './pages/organizacoes/OrganizacaoConvite';
 import OrganizacaoAdicionar from './pages/organizacoes/OrganizacaoAdicionar';
+import OrganizacaoIntegracoes from './pages/organizacoes/integracoes/OrganizacaoIntegracoes';
+import Clientes from './pages/clientes/Clientes';
+import ClientesAdicionar from './pages/clientes/ClientesAdicionar';
+import ClientesEditar from './pages/clientes/ClientesEditar';
 
 export function MainRoutes(): JSX.Element {
   const authContext = useContext(AuthContext);
@@ -44,6 +54,9 @@ export function MainRoutes(): JSX.Element {
       </PrivateRoute>
       <PrivateRoute exact path="/organizacoes/adicionar">
         <OrganizacaoAdicionar />
+      </PrivateRoute>
+      <PrivateRoute exact path="/organizacoes/integracoes">
+        <OrganizacaoIntegracoes />
       </PrivateRoute>
       <Route exact path="/organizacoes/convite/:token">
         <OrganizacaoConvite />
@@ -74,6 +87,15 @@ export function MainRoutes(): JSX.Element {
       </PrivateRoute>
       <PrivateRoute path="/movimentacoes/editar/:id" exact>
         <MovimentacoesEditar />
+      </PrivateRoute>
+      <PrivateRoute exact path="/clientes">
+        <Clientes />
+      </PrivateRoute>
+      <PrivateRoute path="/clientes/adicionar" exact>
+        <ClientesAdicionar />
+      </PrivateRoute>
+      <PrivateRoute path="/clientes/editar/:id" exact>
+        <ClientesEditar />
       </PrivateRoute>
       <Route
         exact
@@ -113,6 +135,9 @@ export default function Routes(): JSX.Element {
             </IonTabButton>
             <IonTabButton tab="movimentacoes" href="/movimentacoes">
               <IonIcon icon={cashOutline} />
+            </IonTabButton>
+            <IonTabButton tab="clientes" href="/clientes">
+              <IonIcon icon={peopleSharp} />
             </IonTabButton>
             <IonTabButton tab="contas" href="/contas">
               <IonIcon icon={wallet} />

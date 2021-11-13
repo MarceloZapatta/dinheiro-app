@@ -64,7 +64,7 @@ export default function OrganizacaoAdicionar(): JSX.Element {
             }
           }
         } else {
-          history.push('/selecionar-organizacao');
+          history.push('/organizacoes/selecionar');
         }
 
         setSubmitting(false);

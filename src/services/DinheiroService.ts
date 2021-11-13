@@ -1,5 +1,10 @@
-import axios, { AxiosError, AxiosRequestConfig } from 'axios';
+import axios, {
+  AxiosError,
+  AxiosRequestConfig,
+  CancelTokenSource,
+} from 'axios';
 import { CadastrarValues } from '../pages/auth/Cadastrar';
+import { ClientesValues } from '../pages/clientes/ClientesAdicionar';
 import {
   Convite,
   Pessoa,
@@ -48,6 +53,21 @@ export interface OrganizacoesResponse extends Omit<DinheiroResponse, 'data'> {
 }
 export interface OrganizacaoResponse extends Omit<DinheiroResponse, 'data'> {
   data: Organizacao | null;
+}
+
+export interface Integracao {
+  id: number;
+  nome: string;
+}
+export interface IntegracaoDados {
+  id: number;
+  dados: any;
+  integracao: Integracao;
+}
+
+export interface IntegracaoDadosResponse
+  extends Omit<DinheiroResponse, 'data'> {
+  data: IntegracaoDados[];
 }
 
 export interface Conta {
@@ -137,6 +157,40 @@ export interface MovimentacaoResponse extends Omit<DinheiroResponse, 'data'> {
   data: Movimentacao | null;
 }
 
+export interface Endereco {
+  rua: string;
+  numero: string;
+  complemento: string;
+  cidade: string;
+  uf: Uf;
+  cep: string;
+}
+export interface Cliente {
+  id: number;
+  nome: string;
+  documento: string;
+  email: string;
+  endereco: Endereco;
+}
+
+export interface ClienteStore extends Omit<Cliente, 'id'> {
+  id?: number;
+}
+
+export interface ClientesResponse
+  extends Omit<DinheiroResponse, 'data' | 'meta'> {
+  data: Cliente[];
+  meta?: {
+    saldo: number;
+    // eslint-disable-next-line camelcase
+    saldo_previsto: number;
+  };
+}
+
+export interface ClienteResponse extends Omit<DinheiroResponse, 'data'> {
+  data: Cliente | null;
+}
+
 export interface Cor {
   id: number;
   nome: string;
@@ -157,7 +211,11 @@ export interface UfsResponse extends Omit<DinheiroResponse, 'data'> {
 }
 
 export default class DinheiroService {
+  cancelToken: CancelTokenSource | null;
+
   constructor() {
+    this.cancelToken = null;
+
     axios.interceptors.request.use((config: AxiosRequestConfig) => {
       if (config.headers) {
         config.headers.Accept = 'application/json';
@@ -263,6 +321,14 @@ export default class DinheiroService {
         status_codigo: Number(error.code),
         data: [],
       }));
+  }
+
+  async getIntegracoes(): Promise<IntegracaoDadosResponse> {
+    return axios
+      .get<IntegracaoDadosResponse>(
+        `${this.baseUrl}v1/organizacoes/integracoes`
+      )
+      .then((response) => response.data);
   }
 
   async getOrganizacao(): Promise<OrganizacaoResponse> {
@@ -417,6 +483,50 @@ export default class DinheiroService {
   async deleteMovimentacao(id: number): Promise<MovimentacoesResponse> {
     return axios
       .delete<MovimentacoesResponse>(`${this.baseUrl}v1/movimentacoes/${id}`)
+      .then((response) => response.data);
+  }
+
+  async getClientes(
+    values: any,
+    cancelToken: CancelTokenSource
+  ): Promise<ClientesResponse> {
+    return axios
+      .get<ClientesResponse>(
+        `${this.baseUrl}v1/clientes?${this.buildParams(values).toString()}`,
+        {
+          cancelToken: cancelToken.token,
+        }
+      )
+      .then((response) => response.data)
+      .catch((error: AxiosError) => ({
+        sucesso: false,
+        mensagem: error.message,
+        status_codigo: Number(error.code),
+        data: [],
+      }));
+  }
+
+  storeCliente(conta: ClientesValues): Promise<ClienteResponse> {
+    return axios
+      .post<ClienteResponse>(`${this.baseUrl}v1/clientes`, conta)
+      .then((response) => response.data);
+  }
+
+  updateCliente(cliente: ClienteStore): Promise<ClienteResponse> {
+    return axios
+      .put<ClienteResponse>(`${this.baseUrl}v1/clientes/${cliente.id}`, cliente)
+      .then((response) => response.data);
+  }
+
+  async getCliente(id: number): Promise<ClienteResponse> {
+    return axios
+      .get<ClienteResponse>(`${this.baseUrl}v1/clientes/${id}`)
+      .then((response) => response.data);
+  }
+
+  async deleteCliente(id: number): Promise<ClientesResponse> {
+    return axios
+      .delete<ClientesResponse>(`${this.baseUrl}v1/clientes/${id}`)
       .then((response) => response.data);
   }
 

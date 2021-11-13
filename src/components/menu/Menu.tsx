@@ -11,6 +11,7 @@ import {
 } from '@ionic/react';
 import {
   exitOutline,
+  gridOutline,
   peopleOutline,
   swapHorizontalOutline,
 } from 'ionicons/icons';
@@ -48,6 +49,13 @@ export default function Menu(): JSX.Element {
           <IonItem button onClick={() => handleClick('/organizacoes/perfil')}>
             <IonIcon icon={peopleOutline} slot="start" />
             Perfil da organização
+          </IonItem>
+          <IonItem
+            button
+            onClick={() => handleClick('/organizacoes/integracoes')}
+          >
+            <IonIcon icon={gridOutline} slot="start" />
+            Integrações
           </IonItem>
           <IonItem button onClick={() => handleClick('/sair')}>
             <IonIcon icon={exitOutline} slot="start" />
