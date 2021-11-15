@@ -7,6 +7,7 @@ import {
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import {
+  barChart,
   cashOutline,
   fileTrayFull,
   menuOutline,
@@ -39,6 +40,7 @@ import OrganizacaoIntegracoes from './pages/organizacoes/integracoes/Organizacao
 import Clientes from './pages/clientes/Clientes';
 import ClientesAdicionar from './pages/clientes/ClientesAdicionar';
 import ClientesEditar from './pages/clientes/ClientesEditar';
+import Relatorios from './pages/relatorios/Relatorios';
 
 export function MainRoutes(): JSX.Element {
   const authContext = useContext(AuthContext);
@@ -97,6 +99,9 @@ export function MainRoutes(): JSX.Element {
       <PrivateRoute path="/clientes/editar/:id" exact>
         <ClientesEditar />
       </PrivateRoute>
+      <PrivateRoute exact path="/relatorios">
+        <Relatorios />
+      </PrivateRoute>
       <Route
         exact
         path="/"
@@ -144,6 +149,9 @@ export default function Routes(): JSX.Element {
             </IonTabButton>
             <IonTabButton tab="categorias" href="/categorias">
               <IonIcon icon={fileTrayFull} />
+            </IonTabButton>
+            <IonTabButton tab="relatorios" href="/relatorios">
+              <IonIcon icon={barChart} />
             </IonTabButton>
             {/* <IonTabButton onClick={() => openMenu()}>
               <IonIcon icon={menu} onClick={() => openMenu()} />
