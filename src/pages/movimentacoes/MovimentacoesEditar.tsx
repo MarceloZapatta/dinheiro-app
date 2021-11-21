@@ -11,6 +11,7 @@ import {
 import { Form, Formik } from 'formik';
 import { useHistory, useParams } from 'react-router';
 import * as Yup from 'yup';
+import { close, trash } from 'ionicons/icons';
 import Header from '../../components/Header';
 import MovimentacoesForm from './MovimentacoesForm';
 import DinheiroService, { Movimentacao } from '../../services/DinheiroService';
@@ -107,13 +108,16 @@ export default function MovimentacoesEditar(): JSX.Element {
   function handleExcluir() {
     return present({
       header: 'Atenção',
-      message: 'Essa ação não poderá ser revertida, deseja realmente excluir?',
+      message: !movimentacao?.cobranca
+        ? 'Essa ação não poderá ser revertida, deseja realmente excluir?'
+        : 'Essa ação não poderá ser revertida, deseja realmente cancelar a cobrança?',
       buttons: [
         'Cancelar',
         {
           text: 'Ok',
           handler: () => {
             const dinheiroService = new DinheiroService();
+
             return dinheiroService
               .deleteMovimentacao(Number(id))
               .then((response) => {
@@ -160,11 +164,16 @@ export default function MovimentacoesEditar(): JSX.Element {
                       <MovimentacoesForm movimentacao={movimentacao} />
                     </IonCol>
                   </IonRow>
-                  <ButtonAdicionar
-                    isSubmitting={isSubmitting}
-                    action={() => submitForm()}
+                  {!movimentacao?.cobranca && (
+                    <ButtonAdicionar
+                      isSubmitting={isSubmitting}
+                      action={() => submitForm()}
+                    />
+                  )}
+                  <ButtonExcluir
+                    action={() => handleExcluir()}
+                    icon={movimentacao.cobranca ? close : trash}
                   />
-                  <ButtonExcluir action={() => handleExcluir()} />
                 </Form>
               )}
             </Formik>

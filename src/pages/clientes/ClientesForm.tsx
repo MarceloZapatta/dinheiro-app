@@ -147,7 +147,7 @@ export default function ClientesForm(): JSX.Element {
                 />
               </IonItem>
             </IonCol>
-            <IonCol size="3">
+            <IonCol sizeXs="5">
               <IonItem>
                 <IonLabel position="stacked">Sem número</IonLabel>
                 <IonCheckbox

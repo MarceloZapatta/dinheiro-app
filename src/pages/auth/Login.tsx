@@ -195,6 +195,14 @@ export default function Login(): JSX.Element {
                 Entrar
               </IonButton>
               <IonButton
+                title="Esqueci a senha"
+                expand="block"
+                fill="clear"
+                routerLink="/esqueci-a-senha"
+              >
+                Esqueci a senha
+              </IonButton>
+              <IonButton
                 title="Registrar"
                 expand="block"
                 fill="clear"

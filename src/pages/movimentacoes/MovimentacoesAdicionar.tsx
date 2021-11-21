@@ -20,6 +20,8 @@ export interface MovimentacoesValues {
   conta_id: number;
   // eslint-disable-next-line camelcase
   categoria_id: number;
+  // eslint-disable-next-line camelcase
+  cliente_id?: number;
 }
 
 export interface MovimentacoesErrosValues {
@@ -42,6 +44,51 @@ export default function MovimentacoesAdicionar(): JSX.Element {
     { setSubmitting, setErrors }: any
   ) {
     const dinheiroService = new DinheiroService();
+
+    const despesaCobranca = 2;
+
+    if (Number(values.despesa) === despesaCobranca) {
+      return dinheiroService
+        .storeCobranca(values)
+        .then((response) => {
+          if (response.sucesso !== true) {
+            if (response.mensagem === 'Network request failed') {
+              response.mensagem =
+                'Erro de conexão. Tente novamente mais tarde.';
+            }
+
+            if (response.status_codigo === 422 && response.erros) {
+              if (Object.keys(response.erros).length > 0) {
+                setErrors(
+                  dinheiroService.transformDinheiroErros(response.erros)
+                );
+              }
+            }
+          } else {
+            history.push('/movimentacoes');
+          }
+
+          setSubmitting(false);
+        })
+        .catch((error) => {
+          setSubmitting(false);
+
+          if (
+            error.response.data &&
+            error.response.data.status_codigo === 422 &&
+            error.response.data.erros
+          ) {
+            if (Object.keys(error.response.data.erros).length > 0) {
+              const erros = dinheiroService.transformDinheiroErros(
+                error.response.data.erros
+              );
+
+              setErrors(erros);
+            }
+          }
+        });
+    }
+
     return dinheiroService
       .storeMovimentacao(values)
       .then((response) => {
@@ -99,7 +146,7 @@ export default function MovimentacoesAdicionar(): JSX.Element {
             validationSchema={Yup.object().shape({
               despesa: Yup.number()
                 .min(0)
-                .max(1)
+                .max(2)
                 .required('O tipo de transação é obrigatório'),
               descricao: Yup.string().required('A descrição é obrigatória.'),
               observacoes: Yup.string(),

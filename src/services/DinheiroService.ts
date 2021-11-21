@@ -70,6 +70,11 @@ export interface IntegracaoDadosResponse
   data: IntegracaoDados[];
 }
 
+export interface IntegracaoJunoLinkCadastroResponse
+  extends Omit<DinheiroResponse, 'data'> {
+  data: { url: string };
+}
+
 export interface Conta {
   id: number;
   nome: string;
@@ -121,6 +126,7 @@ export interface CategoriaResponse extends Omit<DinheiroResponse, 'data'> {
 
 export interface Movimentacao {
   id: number;
+  cliente: Cliente;
   descricao: string;
   observacoes: string;
   conta: Conta;
@@ -128,6 +134,24 @@ export interface Movimentacao {
   // eslint-disable-next-line camelcase
   data_transacao: string;
   valor: number;
+  cobranca?: Cobranca;
+}
+
+export interface Cobranca {
+  id: number;
+  // eslint-disable-next-line camelcase
+  valor_pago: number;
+  // eslint-disable-next-line camelcase
+  data_pagamento: string;
+  // eslint-disable-next-line camelcase
+  data_cancelameto: string;
+  status: string;
+  // eslint-disable-next-line camelcase
+  checkout_url: string;
+  // eslint-disable-next-line camelcase
+  fatura_url: string;
+  // eslint-disable-next-line camelcase
+  pix_imagem_base_64: string;
 }
 
 export interface MovimentacaoStore {
@@ -240,7 +264,11 @@ export default class DinheiroService {
         return response;
       },
       (error) => {
-        if (error.response.status === 401 && window.location.pathname !== '/') {
+        if (
+          error.response &&
+          error.response.status === 401 &&
+          window.location.pathname !== '/'
+        ) {
           localStorage.clear();
           window.location.href = '/';
         }
@@ -327,6 +355,14 @@ export default class DinheiroService {
     return axios
       .get<IntegracaoDadosResponse>(
         `${this.baseUrl}v1/organizacoes/integracoes`
+      )
+      .then((response) => response.data);
+  }
+
+  async getLinkCadastroJuno(): Promise<IntegracaoJunoLinkCadastroResponse> {
+    return axios
+      .get<IntegracaoJunoLinkCadastroResponse>(
+        `${this.baseUrl}v1/organizacoes/integracoes/juno/link-cadastrar`
       )
       .then((response) => response.data);
   }
@@ -457,9 +493,25 @@ export default class DinheiroService {
       }));
   }
 
-  storeMovimentacao(conta: MovimentacaoStore): Promise<MovimentacaoResponse> {
+  storeMovimentacao(
+    movimentacao: MovimentacaoStore
+  ): Promise<MovimentacaoResponse> {
     return axios
-      .post<MovimentacaoResponse>(`${this.baseUrl}v1/movimentacoes`, conta)
+      .post<MovimentacaoResponse>(
+        `${this.baseUrl}v1/movimentacoes`,
+        movimentacao
+      )
+      .then((response) => response.data);
+  }
+
+  storeCobranca(
+    movimentacao: MovimentacaoStore
+  ): Promise<MovimentacaoResponse> {
+    return axios
+      .post<MovimentacaoResponse>(
+        `${this.baseUrl}v1/movimentacoes/emitir-cobranca`,
+        movimentacao
+      )
       .then((response) => response.data);
   }
 

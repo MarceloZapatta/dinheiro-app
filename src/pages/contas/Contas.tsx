@@ -61,7 +61,7 @@ export default function Contas(): JSX.Element {
                       {Intl.NumberFormat('pt-BR', {
                         style: 'currency',
                         currency: 'BRL',
-                      }).format(conta.saldo)}
+                      }).format(conta.saldo_inicial)}
                     </IonLabel>
                   </IonItem>
                 ))}

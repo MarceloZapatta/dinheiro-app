@@ -17,6 +17,7 @@ import { Movimentacao } from '../../services/DinheiroService';
 import TextMask from '../../components/TextMask';
 import CategoriasInput from '../../components/categorias/CategoriasInput';
 import ContasInput from '../../components/contas/ContasInput';
+import ClienteSelect from '../../components/clientes/ClienteSelect';
 
 interface MovimentacoesFormProps {
   movimentacao?: Movimentacao;
@@ -45,16 +46,30 @@ export default function MovimentacoesForm(
           onIonChange={handleChange}
           cancelText="Cancelar"
           interface="popover"
+          disabled={!!movimentacao?.cobranca}
         >
           <IonSelectOption value="1">Despesa</IonSelectOption>
           <IonSelectOption value="0">Receita</IonSelectOption>
+          <IonSelectOption value="2">Cobrança</IonSelectOption>
         </IonSelect>
       </IonItem>
+      <ClienteSelect
+        initialValue={movimentacao?.cliente}
+        onChange={(cliente) => setFieldValue('cliente_id', cliente.id)}
+        disabled={!!movimentacao?.cobranca}
+      />
+      {errors.cliente_id ? (
+        <ErrorField
+          mensagem={errors.cliente_id}
+          testid="organizacao-tipo-id-invaildo-text"
+        />
+      ) : null}
       <IonItem>
         <IonLabel position="floating">Data</IonLabel>
         <IonDatetime
           name="data_transacao"
           value={selectedDate}
+          disabled={!!movimentacao?.cobranca}
           onIonChange={(e) => {
             if (e.detail.value) {
               setSelectedDate(e.detail.value);
@@ -80,6 +95,7 @@ export default function MovimentacoesForm(
         <IonInput
           name="descricao"
           value={values.descricao}
+          disabled={!!movimentacao?.cobranca}
           onIonChange={handleChange}
         />
       </IonItem>
@@ -94,6 +110,7 @@ export default function MovimentacoesForm(
         <IonInput
           name="observacoes"
           value={values.observacoes}
+          disabled={!!movimentacao?.cobranca}
           onIonChange={handleChange}
         />
       </IonItem>
@@ -113,6 +130,7 @@ export default function MovimentacoesForm(
           money
           onChange={(e) => setFieldValue('valor', e.detail.value)}
           testid="valor-text-mask"
+          disabled={!!movimentacao?.cobranca}
         />
       </IonItem>
       {errors.valor ? (
@@ -124,6 +142,7 @@ export default function MovimentacoesForm(
       <CategoriasInput
         initialValue={movimentacao?.categoria ?? null}
         onChange={(e) => setFieldValue('categoria_id', e)}
+        disabled={!!movimentacao?.cobranca}
       />
       {errors.categoria_id ? (
         <ErrorField
@@ -134,6 +153,7 @@ export default function MovimentacoesForm(
       <ContasInput
         initialValue={movimentacao?.conta ?? null}
         onChange={(e) => setFieldValue('conta_id', e)}
+        disabled={!!movimentacao?.cobranca}
       />
       {errors.conta_id ? (
         <ErrorField

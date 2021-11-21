@@ -7,10 +7,11 @@ import CorIcone from '../cor-icone/CorIcone';
 interface ContasInputInterface {
   initialValue?: Conta | null;
   onChange: (contaId: number) => void;
+  disabled?: boolean;
 }
 
 export default function ContasInput(props: ContasInputInterface): JSX.Element {
-  const { onChange, initialValue } = props;
+  const { onChange, initialValue, disabled } = props;
   const [showContasModal, setShowContasModal] = useState(false);
   const [contaSelecionada, setContaSelecionada] = useState<Conta>();
 
@@ -22,7 +23,9 @@ export default function ContasInput(props: ContasInputInterface): JSX.Element {
   }, []);
 
   function handleOnClick() {
-    setShowContasModal(true);
+    if (!disabled) {
+      setShowContasModal(true);
+    }
   }
 
   function handleContaSelecionada(conta: Conta) {
@@ -33,7 +36,12 @@ export default function ContasInput(props: ContasInputInterface): JSX.Element {
 
   return (
     <>
-      <IonItem onClick={() => handleOnClick()} className="contas-input" button>
+      <IonItem
+        onClick={() => handleOnClick()}
+        className="contas-input"
+        button={!disabled}
+        disabled={disabled}
+      >
         <IonLabel slot="start">Conta</IonLabel>
         <IonLabel slot="end">
           {contaSelecionada ? (
@@ -62,4 +70,5 @@ export default function ContasInput(props: ContasInputInterface): JSX.Element {
 
 ContasInput.defaultProps = {
   initialValue: null,
+  disabled: false,
 };

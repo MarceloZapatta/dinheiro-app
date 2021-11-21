@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useHistory } from 'react-router';
-import { addOutline } from 'ionicons/icons';
+import { addOutline, logoWhatsapp, pencil, shareOutline } from 'ionicons/icons';
 import {
   IonContent,
   IonPage,
@@ -10,6 +10,11 @@ import {
   IonList,
   IonItem,
   IonLabel,
+  IonBadge,
+  IonItemOption,
+  IonItemSliding,
+  IonItemOptions,
+  IonIcon,
 } from '@ionic/react';
 
 import { Formik, Form } from 'formik';
@@ -109,53 +114,106 @@ export default function Movimentacoes(): JSX.Element {
                         <MovimentacoesSkeleton />
                       ) : (
                         movimentacoes.map((movimentacao) => (
-                          <IonItem
-                            button
-                            key={movimentacao.id}
-                            routerLink={`/movimentacoes/editar/${movimentacao.id}`}
+                          <IonItemSliding
+                            onClick={(e) => {
+                              if (!movimentacao.cobranca) {
+                                history.push(
+                                  `movimentacoes/editar/${movimentacao.id}`
+                                );
+                              }
+                              const { currentTarget } = e;
+                              currentTarget
+                                ?.getOpenAmount()
+                                .then((numero) =>
+                                  numero > 0
+                                    ? currentTarget?.close()
+                                    : currentTarget?.open('end')
+                                );
+                            }}
                           >
-                            <IonCol size="auto">
-                              <IonLabel>
-                                <small>
-                                  {moment(
-                                    movimentacao.data_transacao,
-                                    'DD/MM/YYYY'
-                                  ).format('DD/MM')}
+                            <IonItem button key={movimentacao.id}>
+                              <IonCol size="auto">
+                                <IonLabel>
+                                  <small>
+                                    {moment(
+                                      movimentacao.data_transacao,
+                                      'DD/MM/YYYY'
+                                    ).format('DD/MM')}
+                                  </small>
+                                </IonLabel>
+                              </IonCol>
+                              <IonCol sizeXs="3" size="2">
+                                <IonLabel>
+                                  <CategoriaContainer
+                                    categoria={movimentacao.categoria}
+                                    small
+                                  />
+                                  <ContaContainer
+                                    conta={movimentacao.conta}
+                                    small
+                                  />
+                                </IonLabel>
+                              </IonCol>
+                              <IonCol sizeXs="3" size="4">
+                                <IonLabel>
+                                  <small>{movimentacao.descricao}</small>
+                                  {movimentacao.cobranca && (
+                                    <>
+                                      <br />
+                                      <small>
+                                        <IonBadge color="tertiary">
+                                          {movimentacao.cobranca.status}
+                                        </IonBadge>
+                                      </small>
+                                    </>
+                                  )}
+                                </IonLabel>
+                              </IonCol>
+                              <IonCol size="5" className="ion-text-right">
+                                <small
+                                  className={`ion-margin-end valor ${
+                                    movimentacao.valor < 0
+                                      ? 'valor--danger'
+                                      : 'valor--success'
+                                  }`}
+                                >
+                                  {Intl.NumberFormat('pt-BR', {
+                                    style: 'currency',
+                                    currency: 'BRL',
+                                  }).format(movimentacao.valor)}
                                 </small>
-                              </IonLabel>
-                            </IonCol>
-                            <IonCol sizeXs="3" size="2">
-                              <IonLabel>
-                                <CategoriaContainer
-                                  categoria={movimentacao.categoria}
-                                  small
-                                />
-                                <ContaContainer
-                                  conta={movimentacao.conta}
-                                  small
-                                />
-                              </IonLabel>
-                            </IonCol>
-                            <IonCol sizeXs="3" size="4">
-                              <IonLabel>
-                                <small>{movimentacao.descricao}</small>
-                              </IonLabel>
-                            </IonCol>
-                            <IonCol size="5" className="ion-text-right">
-                              <small
-                                className={`ion-margin-end valor ${
-                                  movimentacao.valor < 0
-                                    ? 'valor--danger'
-                                    : 'valor--success'
-                                }`}
+                              </IonCol>
+                            </IonItem>
+                            <IonItemOptions side="end">
+                              {movimentacao.cobranca && (
+                                <>
+                                  <IonItemOption
+                                    onClick={() =>
+                                      window.open(
+                                        `https://api.whatsapp.com/send?text=*Poupis*%0ASua fatura com vencimento em: *${movimentacao.data_transacao}* está disponível pelo link:%0A${movimentacao.cobranca?.checkout_url}`
+                                      )
+                                    }
+                                  >
+                                    <IonIcon icon={logoWhatsapp} />
+                                  </IonItemOption>
+                                  <IonItemOption
+                                    onClick={() =>
+                                      window.open(
+                                        movimentacao.cobranca?.checkout_url
+                                      )
+                                    }
+                                  >
+                                    <IonIcon icon={shareOutline} />
+                                  </IonItemOption>
+                                </>
+                              )}
+                              <IonItemOption
+                                routerLink={`movimentacoes/editar/${movimentacao.id}`}
                               >
-                                {Intl.NumberFormat('pt-BR', {
-                                  style: 'currency',
-                                  currency: 'BRL',
-                                }).format(movimentacao.valor)}
-                              </small>
-                            </IonCol>
-                          </IonItem>
+                                <IonIcon icon={pencil} />
+                              </IonItemOption>
+                            </IonItemOptions>
+                          </IonItemSliding>
                         ))
                       )}
                       <IonItem>

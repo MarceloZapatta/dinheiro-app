@@ -11,6 +11,7 @@ import {
 import { Form, Formik } from 'formik';
 import { useHistory } from 'react-router';
 import * as Yup from 'yup';
+import { exitOutline } from 'ionicons/icons';
 import Header from '../../components/Header';
 import OrganizacaoPerfilForm from './OrganizacaoPerfilForm';
 import DinheiroService, { Organizacao } from '../../services/DinheiroService';
@@ -188,7 +189,10 @@ export default function OrganizacaoPerfilEditar(): JSX.Element {
                 action={() => submitForm()}
                 isSubmitting={isSubmitting}
               />
-              <ButtonExcluir action={() => handleExcluir()} />
+              <ButtonExcluir
+                action={() => handleExcluir()}
+                icon={exitOutline}
+              />
             </>
           )}
         </Formik>

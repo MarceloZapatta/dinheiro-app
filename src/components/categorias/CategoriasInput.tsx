@@ -7,12 +7,13 @@ import CorIcone from '../cor-icone/CorIcone';
 interface CategoriasInputInterface {
   initialValue?: Categoria | null;
   onChange: (categoriaId: number) => void;
+  disabled?: boolean;
 }
 
 export default function CategoriasInput(
   props: CategoriasInputInterface
 ): JSX.Element {
-  const { onChange, initialValue } = props;
+  const { onChange, initialValue, disabled } = props;
   const [showCategoriasModal, setShowCategoriasModal] = useState(false);
   const [categoriaSelecionada, setCategoriaSelecionada] = useState<Categoria>();
 
@@ -24,7 +25,9 @@ export default function CategoriasInput(
   }, []);
 
   function handleOnClick() {
-    setShowCategoriasModal(true);
+    if (!disabled) {
+      setShowCategoriasModal(true);
+    }
   }
 
   function handleCategoriaSelecionada(categoria: Categoria) {
@@ -38,7 +41,8 @@ export default function CategoriasInput(
       <IonItem
         onClick={() => handleOnClick()}
         className="categorias-input"
-        button
+        button={!disabled}
+        disabled={disabled}
       >
         <IonLabel slot="start">Categoria</IonLabel>
         <IonLabel slot="end">
@@ -70,4 +74,5 @@ export default function CategoriasInput(
 
 CategoriasInput.defaultProps = {
   initialValue: null,
+  disabled: false,
 };

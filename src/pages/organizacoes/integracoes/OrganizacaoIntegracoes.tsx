@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router';
 import {
   IonContent,
   IonPage,
@@ -18,12 +17,12 @@ import './OrganizacaoIntegracoes.scss';
 import Dinheiro, {
   IntegracaoDados,
   IntegracaoDadosResponse,
+  IntegracaoJunoLinkCadastroResponse,
 } from '../../../services/DinheiroService';
 import juno from '../../../assets/img/brands/juno.svg';
 
 export default function OrganizacaoIntegracoes(): JSX.Element {
   const [integracaoDados, setIntegracaoDados] = useState<IntegracaoDados[]>();
-  const history = useHistory();
 
   useEffect(() => {
     fetchIntegracoes();
@@ -35,19 +34,26 @@ export default function OrganizacaoIntegracoes(): JSX.Element {
     setIntegracaoDados(response.data);
   }
 
+  async function handleCadastrarJuno() {
+    const dinheiro = new Dinheiro();
+    const response: IntegracaoJunoLinkCadastroResponse =
+      await dinheiro.getLinkCadastroJuno();
+    window.open(response.data.url);
+  }
+
   const integradoJuno = !!integracaoDados?.find(
     (integracaoDado) => integracaoDado.integracao.nome === 'Juno'
   );
 
   return (
     <IonPage data-testid="login-page">
-      <Header titulo="Selecionar organização" disableBackButton />
+      <Header titulo="Integrações" disableBackButton />
       <IonContent>
         <IonGrid>
           <IonRow class="ion-margin-top">
             <IonCol size-lg="6" offset-lg="3" size-md="8" offset-md="2">
               <IonRow>
-                <IonCol sizeXs="12" sizeMd="6" sizeLg="6" key={-1}>
+                <IonCol sizeXs="12" sizeMd="6" sizeLg="6">
                   <IonCard className="card-integracao">
                     <IonCardHeader>
                       <IonCardTitle>
@@ -56,11 +62,7 @@ export default function OrganizacaoIntegracoes(): JSX.Element {
                     </IonCardHeader>
                     <IonCardContent>
                       <IonButton
-                        onClick={() =>
-                          history.push(
-                            '/organizacoes/integracoes/juno/cadastrar'
-                          )
-                        }
+                        onClick={() => handleCadastrarJuno()}
                         disabled={integradoJuno}
                       >
                         {integradoJuno ? 'Cadastrado' : 'Cadastrar dados'}

@@ -108,13 +108,13 @@ export default function Clientes(): JSX.Element {
                             key={cliente.id}
                             routerLink={`/clientes/editar/${cliente.id}`}
                           >
-                            <IonCol>
+                            <IonCol sizeXs="6">
                               <IonLabel>{cliente.nome}</IonLabel>
                             </IonCol>
-                            <IonCol>
+                            <IonCol sizeXs="6">
                               <IonLabel>{cliente.email}</IonLabel>
                             </IonCol>
-                            <IonCol>
+                            <IonCol sizeXs="0">
                               <IonLabel>{cliente.documento}</IonLabel>
                             </IonCol>
                           </IonItem>

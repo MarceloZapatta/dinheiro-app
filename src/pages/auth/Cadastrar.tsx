@@ -18,7 +18,6 @@ import { Form, Formik } from 'formik';
 
 import React from 'react';
 import { useHistory } from 'react-router';
-import CadastrarConsultorForm from '../../components/auth/cadastrar/CadastrarConsultorForm';
 import CadastrarPessoaFisicaForm from '../../components/auth/cadastrar/CadastrarPessoaFisicaForm';
 import CadastrarPessoaJuridicaForm from '../../components/auth/cadastrar/CadastrarPessoaJuridicaForm';
 import ErrorField from '../../components/ErrorField';
@@ -192,42 +191,6 @@ export default function Cadastrar(): JSX.Element {
                         ) : (
                           <CadastrarPessoaJuridicaForm />
                         )}
-                      </IonCol>
-                    </IonRow>
-                    <IonRow class="ion-margin-top">
-                      <IonCol
-                        size-lg="4"
-                        offset-lg="4"
-                        size-md="8"
-                        offset-md="2"
-                      >
-                        <IonList>
-                          <IonRadioGroup
-                            name="consultor"
-                            onIonChange={handleChange}
-                          >
-                            <IonListHeader>
-                              <IonLabel>
-                                Deseja se cadastrar como consultor financeiro?
-                              </IonLabel>
-                            </IonListHeader>
-                            <IonItem>
-                              <IonLabel>Sim</IonLabel>
-                              <IonRadio slot="start" value={1} />
-                            </IonItem>
-                            <IonItem>
-                              <IonLabel>Não</IonLabel>
-                              <IonRadio slot="start" value={0} />
-                            </IonItem>
-                          </IonRadioGroup>
-                        </IonList>
-                        {errors.consultor ? (
-                          <ErrorField
-                            mensagem={errors.consultor}
-                            testid="consultor-invalido-text"
-                          />
-                        ) : null}
-                        {values.consultor === 1 && <CadastrarConsultorForm />}
                       </IonCol>
                     </IonRow>
                   </>
