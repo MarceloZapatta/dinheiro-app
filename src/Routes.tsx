@@ -41,6 +41,8 @@ import Clientes from './pages/clientes/Clientes';
 import ClientesAdicionar from './pages/clientes/ClientesAdicionar';
 import ClientesEditar from './pages/clientes/ClientesEditar';
 import Relatorios from './pages/relatorios/Relatorios';
+import ImportacoesEditar from './pages/movimentacoes/importacoes/ImportacoesEditar';
+import Importacoes from './pages/movimentacoes/importacoes/Importacoes';
 
 export function MainRoutes(): JSX.Element {
   const authContext = useContext(AuthContext);
@@ -86,6 +88,12 @@ export function MainRoutes(): JSX.Element {
       </PrivateRoute>
       <PrivateRoute path="/movimentacoes/adicionar" exact>
         <MovimentacoesAdicionar />
+      </PrivateRoute>
+      <PrivateRoute path="/movimentacoes/importacoes" exact>
+        <Importacoes />
+      </PrivateRoute>
+      <PrivateRoute path="/movimentacoes/importacoes/:id" exact>
+        <ImportacoesEditar />
       </PrivateRoute>
       <PrivateRoute path="/movimentacoes/editar/:id" exact>
         <MovimentacoesEditar />

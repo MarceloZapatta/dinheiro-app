@@ -13,6 +13,7 @@ import {
   exitOutline,
   gridOutline,
   peopleOutline,
+  pushOutline,
   swapHorizontalOutline,
 } from 'ionicons/icons';
 import { useHistory } from 'react-router';
@@ -56,6 +57,13 @@ export default function Menu(): JSX.Element {
           >
             <IonIcon icon={gridOutline} slot="start" />
             Integrações
+          </IonItem>
+          <IonItem
+            button
+            onClick={() => handleClick('/movimentacoes/importacoes')}
+          >
+            <IonIcon icon={pushOutline} slot="start" />
+            Importações
           </IonItem>
           <IonItem button onClick={() => handleClick('/sair')}>
             <IonIcon icon={exitOutline} slot="start" />

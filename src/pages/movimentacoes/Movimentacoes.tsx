@@ -115,6 +115,7 @@ export default function Movimentacoes(): JSX.Element {
                       ) : (
                         movimentacoes.map((movimentacao) => (
                           <IonItemSliding
+                            key={movimentacao.id}
                             onClick={(e) => {
                               if (!movimentacao.cobranca) {
                                 history.push(

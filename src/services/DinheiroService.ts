@@ -181,6 +181,22 @@ export interface MovimentacaoResponse extends Omit<DinheiroResponse, 'data'> {
   data: Movimentacao | null;
 }
 
+export interface MovimentacaoImportacao {
+  id: number;
+  // eslint-disable-next-line camelcase
+  criado_em: string;
+  movimentacoes?: Movimentacao[];
+}
+export interface MovimentacaoImportacoesResponse
+  extends Omit<DinheiroResponse, 'data'> {
+  data: MovimentacaoImportacao[];
+}
+
+export interface MovimentacaoImportacaoResponse
+  extends Omit<DinheiroResponse, 'data'> {
+  data: MovimentacaoImportacao | null;
+}
+
 export interface Endereco {
   rua: string;
   numero: string;
@@ -532,6 +548,24 @@ export default class DinheiroService {
       .then((response) => response.data);
   }
 
+  async getMovimentacaoImportacao(
+    id: number
+  ): Promise<MovimentacaoImportacaoResponse> {
+    return axios
+      .get<MovimentacaoImportacaoResponse>(
+        `${this.baseUrl}v1/movimentacoes/importacoes/${id}`
+      )
+      .then((response) => response.data);
+  }
+
+  async getMovimentacaoImportacoes(): Promise<MovimentacaoImportacoesResponse> {
+    return axios
+      .get<MovimentacaoImportacoesResponse>(
+        `${this.baseUrl}v1/movimentacoes/importacoes`
+      )
+      .then((response) => response.data);
+  }
+
   async deleteMovimentacao(id: number): Promise<MovimentacoesResponse> {
     return axios
       .delete<MovimentacoesResponse>(`${this.baseUrl}v1/movimentacoes/${id}`)
@@ -620,6 +654,15 @@ export default class DinheiroService {
   async getUfs(): Promise<UfsResponse> {
     return axios
       .get<UfsResponse>(`${this.baseUrl}v1/ufs`)
+      .then((response) => response.data);
+  }
+
+  async importarExcel(data: FormData): Promise<DinheiroResponse> {
+    return axios
+      .post<DinheiroResponse>(
+        `${this.baseUrl}v1/movimentacoes/importacoes/excel`,
+        data
+      )
       .then((response) => response.data);
   }
 }
