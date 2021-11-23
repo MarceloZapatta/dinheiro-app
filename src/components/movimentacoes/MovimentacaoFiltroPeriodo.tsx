@@ -10,7 +10,13 @@ import { chevronBackOutline, chevronForwardOutline } from 'ionicons/icons';
 import { useFormikContext } from 'formik';
 import moment from 'moment';
 
-export default function MovimentacaoFiltroPeriodo(): JSX.Element {
+interface MovimentacaoFiltroPeriodoProps {
+  anual?: boolean;
+}
+
+export default function MovimentacaoFiltroPeriodo(
+  props: MovimentacaoFiltroPeriodoProps
+): JSX.Element {
   const meses = [
     'Janeiro',
     'Fevereiro',
@@ -29,29 +35,42 @@ export default function MovimentacaoFiltroPeriodo(): JSX.Element {
   const [dataAtual, setDataAtual] = useState(moment());
   const dataRef = useRef<HTMLIonDatetimeElement>(null);
   const { setFieldValue, submitForm, isSubmitting } = useFormikContext();
+  const { anual } = props;
 
   useEffect(() => {
     setMesAtual(meses[dataAtual.month()]);
   }, [dataAtual]);
 
   function handleProximoMes() {
-    setDataAtual(dataAtual.add(1, 'month'));
-    setMesAtual(meses[dataAtual.month()]);
+    let novaData = dataAtual.clone().add(1, 'month');
+
+    if (anual) {
+      novaData = dataAtual.clone().add(1, 'year');
+    }
+
+    setDataAtual(novaData);
+    setMesAtual(meses[novaData.month()]);
+
     setFieldValue(
       'data_inicio',
-      dataAtual.startOf('month').format('YYYY-MM-DD HH:mm:ss')
+      novaData.startOf('month').format('YYYY-MM-DD HH:mm:ss')
     );
     setFieldValue(
       'data_fim',
-      dataAtual.endOf('month').format('YYYY-MM-DD HH:mm:ss')
+      novaData.endOf('month').format('YYYY-MM-DD HH:mm:ss')
     );
     submitForm();
   }
 
   function handleAnteriorMes() {
-    const novaData = dataAtual.clone().subtract(1, 'month');
+    let novaData = dataAtual.clone().subtract(1, 'month');
+
+    if (anual) {
+      novaData = dataAtual.clone().subtract(1, 'year');
+    }
+
     setDataAtual(novaData);
-    setMesAtual(meses[dataAtual.month()]);
+    setMesAtual(meses[novaData.month()]);
     setFieldValue(
       'data_inicio',
       novaData.clone().startOf('month').format('YYYY-MM-DD HH:mm:ss')
@@ -106,13 +125,13 @@ export default function MovimentacaoFiltroPeriodo(): JSX.Element {
           color="tertiary"
           onClick={() => handleClickData()}
         >
-          {mesAtual} / {dataAtual.year()}
+          {anual ? dataAtual.year() : `${mesAtual} / ${dataAtual.year()}`}
         </IonButton>
         <IonDatetime
           value={dataAtual.toISOString()}
           hidden
           onIonChange={(e) => handleChangeDate(e)}
-          pickerFormat="MMMM/YYYY"
+          pickerFormat={anual ? 'YYYY' : 'MMMM/YYYY'}
           max="2100"
           monthNames={meses}
           ref={dataRef}
@@ -136,3 +155,7 @@ export default function MovimentacaoFiltroPeriodo(): JSX.Element {
     </IonItem>
   );
 }
+
+MovimentacaoFiltroPeriodo.defaultProps = {
+  anual: false,
+};

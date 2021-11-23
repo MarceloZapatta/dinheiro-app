@@ -250,6 +250,31 @@ export interface UfsResponse extends Omit<DinheiroResponse, 'data'> {
   data: Uf[];
 }
 
+interface Dataset {
+  data: number[];
+  backgroundColor: string[];
+  borderWidth: number;
+}
+
+export interface DashboardPorCategoria {
+  labels: string[];
+  datasets: Dataset[];
+}
+
+export interface DashboardPorCategoriaResponse
+  extends Omit<DinheiroResponse, 'data'> {
+  data: DashboardPorCategoria;
+}
+
+export interface DashboardMovimentacoesAnual {
+  labels: string[];
+  datasets: Dataset[];
+}
+export interface DashboardMovimentacoesAnualResponse
+  extends Omit<DinheiroResponse, 'data'> {
+  data: DashboardMovimentacoesAnual;
+}
+
 export default class DinheiroService {
   cancelToken: CancelTokenSource | null;
 
@@ -662,6 +687,34 @@ export default class DinheiroService {
       .post<DinheiroResponse>(
         `${this.baseUrl}v1/movimentacoes/importacoes/excel`,
         data
+      )
+      .then((response) => response.data);
+  }
+
+  async getDashboardPorCategoria(
+    values: any
+  ): Promise<DashboardPorCategoriaResponse> {
+    return axios
+      .get<DashboardPorCategoriaResponse>(
+        `${
+          this.baseUrl
+        }v1/movimentacoes/dashboards/por-categoria?${this.buildParams(
+          values
+        ).toString()}`
+      )
+      .then((response) => response.data);
+  }
+
+  async getDashboardMovimentacoesAnual(
+    values: any
+  ): Promise<DashboardMovimentacoesAnualResponse> {
+    return axios
+      .get<DashboardMovimentacoesAnualResponse>(
+        `${
+          this.baseUrl
+        }v1/movimentacoes/dashboards/movimentacoes-anual?${this.buildParams(
+          values
+        ).toString()}`
       )
       .then((response) => response.data);
   }
