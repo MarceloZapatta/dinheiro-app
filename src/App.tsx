@@ -27,20 +27,26 @@ import Routes from './Routes';
 interface AppState {
   logado: boolean;
   organizacaoSelecionada: boolean;
+  organizacaoPessoaJuridica: boolean;
 }
 
 interface AuthContextInterface {
   logado: boolean;
   organizacaoSelecionada: boolean;
+  organizacaoPessoaJuridica: boolean;
   toggleLogado: () => void;
   toggleOrganizacaoSelecionada: () => void;
+  toggleOrganizacaoPessoaJuridica: () => void;
 }
 
 export const AuthContext = React.createContext<AuthContextInterface>({
   logado: !!localStorage.getItem('auth.token'),
   organizacaoSelecionada: !!localStorage.getItem('auth.organizacao.hash'),
+  organizacaoPessoaJuridica:
+    localStorage.getItem('auth.organizacao.tipo') === 'Pessoa júridica',
   toggleLogado: () => null,
   toggleOrganizacaoSelecionada: () => null,
+  toggleOrganizacaoPessoaJuridica: () => null,
 });
 
 export default class App extends React.Component<
@@ -53,6 +59,8 @@ export default class App extends React.Component<
     this.state = {
       logado: !!localStorage.getItem('auth.token'),
       organizacaoSelecionada: !!localStorage.getItem('auth.organizacao.hash'),
+      organizacaoPessoaJuridica:
+        localStorage.getItem('auth.organizacao.tipo') === 'Pessoa júridica',
     };
   }
 
@@ -74,8 +82,16 @@ export default class App extends React.Component<
     });
   };
 
+  toggleOrganizacaoPessoaJuridica = (): void => {
+    const { organizacaoPessoaJuridica } = this.state;
+    this.setState({
+      organizacaoPessoaJuridica: !organizacaoPessoaJuridica,
+    });
+  };
+
   render(): JSX.Element {
-    const { logado, organizacaoSelecionada } = this.state;
+    const { logado, organizacaoSelecionada, organizacaoPessoaJuridica } =
+      this.state;
 
     return (
       <IonApp>
@@ -83,8 +99,11 @@ export default class App extends React.Component<
           value={{
             logado,
             organizacaoSelecionada,
+            organizacaoPessoaJuridica,
             toggleLogado: this.toggleLogado,
             toggleOrganizacaoSelecionada: this.toggleOrganizacaoSelecionada,
+            toggleOrganizacaoPessoaJuridica:
+              this.toggleOrganizacaoPessoaJuridica,
           }}
         >
           <Routes />

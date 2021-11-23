@@ -5,17 +5,17 @@ import {
   IonRow,
   IonGrid,
   IonCol,
-  useIonAlert,
+  // useIonAlert,
 } from '@ionic/react';
 
 import { Form, Formik } from 'formik';
 import { useHistory } from 'react-router';
 import * as Yup from 'yup';
-import { exitOutline } from 'ionicons/icons';
+// import { exitOutline } from 'ionicons/icons';
 import Header from '../../components/Header';
 import OrganizacaoPerfilForm from './OrganizacaoPerfilForm';
 import DinheiroService, { Organizacao } from '../../services/DinheiroService';
-import ButtonExcluir from '../../components/button-excluir/ButtonExcluir';
+// import ButtonExcluir from '../../components/button-excluir/ButtonExcluir';
 import ButtonAdicionar from '../../components/button-adicionar/ButtonAdicionar';
 
 export interface OrganizacaoPerfilValues {
@@ -48,7 +48,7 @@ export interface OrganizacaoPerfilErrosValues {
 }
 
 export default function OrganizacaoPerfilEditar(): JSX.Element {
-  const [present] = useIonAlert();
+  // const [present] = useIonAlert();
   const [organizacao, setOrganizacao] = useState<Organizacao>();
   const history = useHistory();
   const [loading, setLoading] = useState(true);
@@ -117,24 +117,24 @@ export default function OrganizacaoPerfilEditar(): JSX.Element {
       });
   }
 
-  function handleExcluir() {
-    return present({
-      header: 'Atenção',
-      message: 'Essa ação não poderá ser revertida, deseja realmente excluir?',
-      buttons: [
-        'Cancelar',
-        {
-          text: 'Ok',
-          handler: () => {
-            const dinheiroService = new DinheiroService();
-            return dinheiroService.deleteOrganizacao().then((response) => {
-              history.push('/organizacoes');
-            });
-          },
-        },
-      ],
-    });
-  }
+  // function handleExcluir() {
+  //   return present({
+  //     header: 'Atenção',
+  //     message: 'Essa ação não poderá ser revertida, deseja realmente excluir?',
+  //     buttons: [
+  //       'Cancelar',
+  //       {
+  //         text: 'Ok',
+  //         handler: () => {
+  //           const dinheiroService = new DinheiroService();
+  //           return dinheiroService.deleteOrganizacao().then((response) => {
+  //             history.push('/organizacoes');
+  //           });
+  //         },
+  //       },
+  //     ],
+  //   });
+  // }
 
   return (
     <IonPage data-testid="login-page">
@@ -189,10 +189,10 @@ export default function OrganizacaoPerfilEditar(): JSX.Element {
                 action={() => submitForm()}
                 isSubmitting={isSubmitting}
               />
-              <ButtonExcluir
+              {/* <ButtonExcluir
                 action={() => handleExcluir()}
                 icon={exitOutline}
-              />
+              /> */}
             </>
           )}
         </Formik>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   IonMenu,
   IonHeader,
@@ -18,9 +18,12 @@ import {
 } from 'ionicons/icons';
 import { useHistory } from 'react-router';
 import { menuController } from '@ionic/core';
+import { AuthContext } from '../../App';
 
 export default function Menu(): JSX.Element {
   const history = useHistory();
+  const authContext = useContext(AuthContext);
+
   function handleClick(route: string) {
     if (route === '/sair') {
       localStorage.clear();
@@ -51,13 +54,15 @@ export default function Menu(): JSX.Element {
             <IonIcon icon={peopleOutline} slot="start" />
             Perfil da organização
           </IonItem>
-          <IonItem
-            button
-            onClick={() => handleClick('/organizacoes/integracoes')}
-          >
-            <IonIcon icon={gridOutline} slot="start" />
-            Integrações
-          </IonItem>
+          {authContext.organizacaoPessoaJuridica && (
+            <IonItem
+              button
+              onClick={() => handleClick('/organizacoes/integracoes')}
+            >
+              <IonIcon icon={gridOutline} slot="start" />
+              Integrações
+            </IonItem>
+          )}
           <IonItem
             button
             onClick={() => handleClick('/movimentacoes/importacoes')}

@@ -151,9 +151,11 @@ export default function Routes(): JSX.Element {
             <IonTabButton tab="movimentacoes" href="/movimentacoes">
               <IonIcon icon={cashOutline} />
             </IonTabButton>
-            <IonTabButton tab="clientes" href="/clientes">
-              <IonIcon icon={peopleSharp} />
-            </IonTabButton>
+            {authContext.organizacaoPessoaJuridica && (
+              <IonTabButton tab="clientes" href="/clientes">
+                <IonIcon icon={peopleSharp} />
+              </IonTabButton>
+            )}
             <IonTabButton tab="contas" href="/contas">
               <IonIcon icon={wallet} />
             </IonTabButton>

@@ -40,11 +40,22 @@ export default function OrganizacaoSelecionar(): JSX.Element {
     setOrganizacoes(response.data);
   }
 
-  function selecionarOrganizacao(hash: string) {
+  function selecionarOrganizacao(hash: string, tipo: string) {
     localStorage.setItem('auth.organizacao.hash', hash);
+    localStorage.setItem('auth.organizacao.tipo', tipo);
     if (!authContext.organizacaoSelecionada) {
       authContext.toggleOrganizacaoSelecionada();
     }
+
+    if (tipo === 'Pessoa júridica' && !authContext.organizacaoPessoaJuridica) {
+      authContext.toggleOrganizacaoPessoaJuridica();
+    } else if (
+      tipo !== 'Pessoa júridica' &&
+      authContext.organizacaoPessoaJuridica
+    ) {
+      authContext.toggleOrganizacaoPessoaJuridica();
+    }
+
     history.push(`/movimentacoes`);
   }
 
@@ -71,7 +82,10 @@ export default function OrganizacaoSelecionar(): JSX.Element {
                         <IonCardContent>
                           <IonButton
                             onClick={() =>
-                              selecionarOrganizacao(organizacao.hash)
+                              selecionarOrganizacao(
+                                organizacao.hash,
+                                organizacao.tipo.tipo
+                              )
                             }
                           >
                             Acessar

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import {
   IonList,
   IonItem,
@@ -18,6 +18,7 @@ import TextMask from '../../components/TextMask';
 import CategoriasInput from '../../components/categorias/CategoriasInput';
 import ContasInput from '../../components/contas/ContasInput';
 import ClienteSelect from '../../components/clientes/ClienteSelect';
+import { AuthContext } from '../../App';
 
 interface MovimentacoesFormProps {
   movimentacao?: Movimentacao;
@@ -28,6 +29,7 @@ export default function MovimentacoesForm(
 ): JSX.Element {
   const { values, errors, handleChange, setFieldValue } =
     useFormikContext<MovimentacoesValues>();
+  const authContext = useContext(AuthContext);
 
   const [selectedDate, setSelectedDate] = useState(
     values.data_transacao
@@ -50,14 +52,18 @@ export default function MovimentacoesForm(
         >
           <IonSelectOption value="1">Despesa</IonSelectOption>
           <IonSelectOption value="0">Receita</IonSelectOption>
-          <IonSelectOption value="2">Cobrança</IonSelectOption>
+          {authContext.organizacaoPessoaJuridica && (
+            <IonSelectOption value="2">Cobrança</IonSelectOption>
+          )}
         </IonSelect>
       </IonItem>
-      <ClienteSelect
-        initialValue={movimentacao?.cliente}
-        onChange={(cliente) => setFieldValue('cliente_id', cliente.id)}
-        disabled={!!movimentacao?.cobranca}
-      />
+      {authContext.organizacaoPessoaJuridica && (
+        <ClienteSelect
+          initialValue={movimentacao?.cliente}
+          onChange={(cliente) => setFieldValue('cliente_id', cliente.id)}
+          disabled={!!movimentacao?.cobranca}
+        />
+      )}
       {errors.cliente_id ? (
         <ErrorField
           mensagem={errors.cliente_id}
