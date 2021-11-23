@@ -691,6 +691,15 @@ export default class DinheiroService {
       .then((response) => response.data);
   }
 
+  async importarCodigoBarras(data: any): Promise<DinheiroResponse> {
+    return axios
+      .post<DinheiroResponse>(
+        `${this.baseUrl}v1/movimentacoes/importacoes/codigo-barras`,
+        data
+      )
+      .then((response) => response.data);
+  }
+
   async getDashboardPorCategoria(
     values: any
   ): Promise<DashboardPorCategoriaResponse> {

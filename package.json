@@ -4,7 +4,9 @@
   "private": true,
   "dependencies": {
     "@capacitor/android": "^2.4.0",
-    "@capacitor/core": "2.4.0",
+    "@capacitor/core": "2.4.2",
+    "@ionic-native/barcode-scanner": "^5.36.0",
+    "@ionic-native/core": "^5.36.0",
     "@ionic/core": "^5.4.1",
     "@ionic/react": "^5.0.7",
     "@ionic/react-router": "^5.0.7",
@@ -29,6 +31,7 @@
     "moment": "^2.29.1",
     "msw": "^0.21.3",
     "node-sass": "^4.0.1",
+    "phonegap-plugin-barcodescanner": "^8.1.0",
     "react": "^16.13.0",
     "react-chartjs-2": "^3.3.0",
     "react-dom": "^16.13.0",

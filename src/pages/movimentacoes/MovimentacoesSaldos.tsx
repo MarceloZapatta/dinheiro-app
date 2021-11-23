@@ -1,8 +1,16 @@
 import React, { useState } from 'react';
-import { IonIcon, IonItem, IonLabel, IonSkeletonText } from '@ionic/react';
+import {
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonSkeletonText,
+  useIonPopover,
+} from '@ionic/react';
+import { useHistory } from 'react-router';
 import './MovimentacoesSaldos.scss';
 import { pushOutline } from 'ionicons/icons';
 import ImportacaoModal from '../../components/importacao/ImportacaoModal';
+import ImportacaoPopover from '../../components/importacao/ImportacaoPopover';
 
 interface MovimentacoesSaldosProps {
   saldo: number;
@@ -16,12 +24,19 @@ export default function MovimentacoesSaldos(
 ): JSX.Element {
   const [showModalImportarExcel, setShowModalImportarExcel] = useState(false);
   const { saldo, saldoPrevisto, hideSaldoPrevisto, isLoading } = props;
+  const history = useHistory();
+  const [present, dismiss] = useIonPopover(ImportacaoPopover, {
+    onHide: () => dismiss(),
+    openModalImportacaoExcel: () => setShowModalImportarExcel(true),
+    history,
+  });
+
   return (
     <IonItem>
       <IonIcon
         icon={pushOutline}
         slot="start"
-        onClick={() => setShowModalImportarExcel(true)}
+        onClick={(e) => present({ event: e.nativeEvent })}
       />
       <IonLabel class="saldos">
         Saldo:{' '}
