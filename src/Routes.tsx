@@ -43,6 +43,7 @@ import ClientesEditar from './pages/clientes/ClientesEditar';
 import Relatorios from './pages/relatorios/Relatorios';
 import ImportacoesEditar from './pages/movimentacoes/importacoes/ImportacoesEditar';
 import Importacoes from './pages/movimentacoes/importacoes/Importacoes';
+import RecuperarSenha from './pages/auth/RecuperarSenha';
 
 export function MainRoutes(): JSX.Element {
   const authContext = useContext(AuthContext);
@@ -117,6 +118,7 @@ export function MainRoutes(): JSX.Element {
           authContext.logado ? <Redirect to="/movimentacoes" /> : <Login />
         }
       />
+      <Route exact path="/recuperar-senha/:token" component={RecuperarSenha} />
       <Route exact path="/cadastrar" component={Cadastrar} />
       <Route path="/verificacao-email" component={VerificacaoEmailEnviado} />
     </>

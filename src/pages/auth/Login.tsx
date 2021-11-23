@@ -10,6 +10,7 @@ import {
   IonButton,
   IonLabel,
   IonText,
+  IonSpinner,
 } from '@ionic/react';
 
 import './Login.css';
@@ -25,7 +26,9 @@ import { AuthContext } from '../../App';
 export default function Login(): JSX.Element {
   const [email, setEmail] = useState<string>();
   const [emailInvalido, setEmailInvalido] = useState(false);
+  const [recuperarSenhaError, setRecuperarSenhaError] = useState('');
   const [password, setPassword] = useState<string>();
+  const [recuperarSenhaLoading, setRecuperarSenhaLoading] = useState(false);
   const [passwordInvalido, setPasswordInvalido] = useState(false);
   const history = useHistory();
   const authContext = useContext(AuthContext);
@@ -143,6 +146,20 @@ export default function Login(): JSX.Element {
     return <span />;
   }
 
+  function renderRecuperarSenhaError(): JSX.Element {
+    if (recuperarSenhaError) {
+      return (
+        <IonItem>
+          <IonText color="danger" data-testid="email-invalido-text">
+            <small>{recuperarSenhaError}</small>
+          </IonText>
+        </IonItem>
+      );
+    }
+
+    return <span />;
+  }
+
   function renderPasswordInvalido(): JSX.Element {
     if (passwordInvalido) {
       return (
@@ -155,6 +172,41 @@ export default function Login(): JSX.Element {
     }
 
     return <span />;
+  }
+
+  function handleOnClickEsqueciASenha() {
+    if (!email) {
+      return setRecuperarSenhaError(
+        'Preencha o e-mail para recuperar a senha!'
+      );
+    }
+
+    const emailRegex = /\S+@\S+/;
+
+    if (!emailRegex.test(email)) {
+      return setRecuperarSenhaError('O e-mail é inválido.');
+    }
+
+    setRecuperarSenhaError('');
+
+    const dinheiro = new Dinheiro();
+
+    setRecuperarSenhaLoading(true);
+
+    return dinheiro
+      .esqueciSenha({ email })
+      .then(() => {
+        store.dispatch(
+          setShow({
+            show: true,
+            titulo: 'Sucesso!',
+            mensagem:
+              'Confira as instruções em seu e-mail para recuperar a senha.',
+          })
+        );
+      })
+      .finally(() => setRecuperarSenhaLoading(false))
+      .catch(() => setRecuperarSenhaLoading(false));
   }
 
   return (
@@ -175,6 +227,7 @@ export default function Login(): JSX.Element {
                 />
               </IonItem>
               {renderEmailInvalido()}
+              {renderRecuperarSenhaError()}
               <IonItem class="ion-margin-bottom">
                 <IonLabel position="floating">Senha</IonLabel>
                 <IonInput
@@ -198,9 +251,13 @@ export default function Login(): JSX.Element {
                 title="Esqueci a senha"
                 expand="block"
                 fill="clear"
-                routerLink="/esqueci-a-senha"
+                onClick={() => handleOnClickEsqueciASenha()}
               >
-                Esqueci a senha
+                {recuperarSenhaLoading ? (
+                  <IonSpinner color="primary" />
+                ) : (
+                  'Esqueci a senha'
+                )}
               </IonButton>
               <IonButton
                 title="Registrar"

@@ -727,4 +727,19 @@ export default class DinheiroService {
       )
       .then((response) => response.data);
   }
+
+  async esqueciSenha(values: any): Promise<DinheiroResponse> {
+    return axios
+      .post<DinheiroResponse>(`${this.baseUrl}v1/auth/esqueci-senha`, values)
+      .then((response) => response.data);
+  }
+
+  async recuperarSenha(values: any): Promise<DinheiroResponse> {
+    return axios
+      .post<DinheiroResponse>(
+        `${this.baseUrl}v1/auth/verificar-recuperar-senha`,
+        values
+      )
+      .then((response) => response.data);
+  }
 }
