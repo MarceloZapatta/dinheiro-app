@@ -53,11 +53,11 @@ export default function MovimentacaoFiltroPeriodo(
 
     setFieldValue(
       'data_inicio',
-      novaData.startOf('month').format('YYYY-MM-DD HH:mm:ss')
+      novaData.startOf(anual ? 'year' : 'month').format('YYYY-MM-DD HH:mm:ss')
     );
     setFieldValue(
       'data_fim',
-      novaData.endOf('month').format('YYYY-MM-DD HH:mm:ss')
+      novaData.endOf(anual ? 'year' : 'month').format('YYYY-MM-DD HH:mm:ss')
     );
     submitForm();
   }
@@ -73,11 +73,17 @@ export default function MovimentacaoFiltroPeriodo(
     setMesAtual(meses[novaData.month()]);
     setFieldValue(
       'data_inicio',
-      novaData.clone().startOf('month').format('YYYY-MM-DD HH:mm:ss')
+      novaData
+        .clone()
+        .startOf(anual ? 'year' : 'month')
+        .format('YYYY-MM-DD HH:mm:ss')
     );
     setFieldValue(
       'data_fim',
-      novaData.clone().endOf('month').format('YYYY-MM-DD HH:mm:ss')
+      novaData
+        .clone()
+        .endOf(anual ? 'year' : 'month')
+        .format('YYYY-MM-DD HH:mm:ss')
     );
     submitForm();
   }
@@ -87,11 +93,17 @@ export default function MovimentacaoFiltroPeriodo(
       const data = moment(e.detail.value);
       setFieldValue(
         'data_inicio',
-        data.clone().startOf('month').format('DD/MM/YYYY')
+        data
+          .clone()
+          .startOf(anual ? 'year' : 'month')
+          .format('DD/MM/YYYY')
       );
       setFieldValue(
         'data_fim',
-        data.clone().endOf('month').format('DD/MM/YYYY')
+        data
+          .clone()
+          .endOf(anual ? 'year' : 'month')
+          .format('DD/MM/YYYY')
       );
       setDataAtual(data);
       submitForm();

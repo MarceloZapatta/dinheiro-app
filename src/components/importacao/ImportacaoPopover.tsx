@@ -1,6 +1,6 @@
 import { BarcodeScanner } from '@ionic-native/barcode-scanner';
 import React from 'react';
-import { IonList, IonListHeader, IonItem } from '@ionic/react';
+import { IonList, IonListHeader, IonItem, isPlatform } from '@ionic/react';
 import DinheiroService from '../../services/DinheiroService';
 
 interface ImportacaoPopoverProps {
@@ -42,9 +42,11 @@ export default function ImportacaoPopover(
       <IonItem button onClick={() => openModalImportacaoExcel()}>
         Excel
       </IonItem>
-      <IonItem button onClick={() => handleOnClickCodigoBarras()}>
-        Código de barras
-      </IonItem>
+      {isPlatform('android') && (
+        <IonItem button onClick={() => handleOnClickCodigoBarras()}>
+          Código de barras
+        </IonItem>
+      )}
       <IonItem lines="none" detail={false} button onClick={() => onHide()}>
         Fechar
       </IonItem>
