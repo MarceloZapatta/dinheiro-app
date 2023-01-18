@@ -223,6 +223,7 @@ export default function Login(): JSX.Element {
                   title="E-mail"
                   color={emailInvalido ? 'danger' : ''}
                   data-testid="email-input"
+                  autocomplete="off"
                   onIonChange={(e) => setEmail(String(e.detail.value))}
                 />
               </IonItem>
@@ -235,6 +236,7 @@ export default function Login(): JSX.Element {
                   title="Senha"
                   color={emailInvalido ? 'danger' : ''}
                   data-testid="senha-input"
+                  autocomplete="off"
                   onIonChange={(e) => setPassword(String(e.detail.value))}
                 />
               </IonItem>
